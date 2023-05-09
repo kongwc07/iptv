@@ -522,3 +522,9 @@ http://198.16.100.90:8278/bbclifestyle_twn/playlist.m3u8?tid=MFCF429984264299842
 http://198.16.100.90:8278/Cn/playlist.m3u8?tid=MCDC2144535021445350&ct=19225&tsum=32569c846de798e3502372d35d00773f
 #EXTINF:-1 tvg-name="M--SkyZ" tvg-logo="https://epg.112114.xyz/logo/M--SkyZ.png" group-title="198",M--SkyZ
 http://198.16.100.90:8278/skynews_antik/playlist.m3u8?tid=MA7A8995522289955222&ct=19225&tsum=017cd1040a70d579955560a0c550c0f2
+#EXTINF:-1 tvg-id="6073" tvg-name="寰宇新闻" tvg-logo="http://epg.51zmt.top:8000/tb1/gt/寰宇新闻.png" group-title="ChiSheng9",寰宇新闻
+https://raw.githubusercontent.com/ChiSheng9/iptv/master/TV02.m3u8
+#EXTINF:-1 tvg-id="6073" tvg-name="TVBS新闻" tvg-logo="http://epg.51zmt.top:8000/tb1/gt/TVBS新闻.png" group-title="ChiSheng9",TVBS新闻
+https://raw.githubusercontent.com/ChiSheng9/iptv/master/TV31.m3u8
+#EXTINF:-1 tvg-id="6073" tvg-name="镜新闻" tvg-logo="http://epg.51zmt.top:8000/tb1/gt/镜新闻png" group-title="ChiSheng9",镜新闻
+https://raw.githubusercontent.com/ChiSheng9/iptv/master/TV70.m3u8
