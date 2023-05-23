@@ -528,3 +528,89 @@ https://raw.githubusercontent.com/ChiSheng9/iptv/master/TV02.m3u8
 https://raw.githubusercontent.com/ChiSheng9/iptv/master/TV31.m3u8
 #EXTINF:-1 tvg-id="6073" tvg-name="镜新闻" tvg-logo="http://epg.51zmt.top:8000/tb1/gt/镜新闻png" group-title="ChiSheng9",镜新闻
 https://raw.githubusercontent.com/ChiSheng9/iptv/master/TV70.m3u8
+#EXTINF:-1 tvg-name="鳳凰衛視資訊台" tvg-logo="https://epg.112114.xyz/logo/鳳凰衛視資訊台.png" group-title="0523",鳳凰衛視資訊台
+http://awei.beimua.com/yes.php?id=2
+#EXTINF:-1 tvg-name="鳳凰衛視中文台" tvg-logo="https://epg.112114.xyz/logo/鳳凰衛視中文台.png" group-title="0523",鳳凰衛視中文台
+http://awei.beimua.com/yes.php?id=11
+#EXTINF:-1 tvg-name="無綫財經·體育·資訊台" tvg-logo="https://epg.112114.xyz/logo/無綫財經·體育·資訊台.png" group-title="0523",無綫財經·體育·資訊台
+http://awei.beimua.com/yes.php?id=12
+#EXTINF:-1 tvg-name="無綫新聞台" tvg-logo="https://epg.112114.xyz/logo/無綫新聞台.png" group-title="0523",無綫新聞台
+http://awei.beimua.com/yes.php?id=13
+#EXTINF:-1 tvg-name="ViuTV" tvg-logo="https://epg.112114.xyz/logo/ViuTV.png" group-title="0523",ViuTV
+http://awei.beimua.com/yes.php?id=15
+#EXTINF:-1 tvg-name="TVB翡翠台" tvg-logo="https://epg.112114.xyz/logo/TVB翡翠台.png" group-title="0523",TVB翡翠台
+http://awei.beimua.com/yes.php?id=16
+#EXTINF:-1 tvg-name="TVB明珠台" tvg-logo="https://epg.112114.xyz/logo/TVB明珠台.png" group-title="0523",TVB明珠台
+http://awei.beimua.com/yes.php?id=17
+#EXTINF:-1 tvg-name="J2台" tvg-logo="https://epg.112114.xyz/logo/J2台.png" group-title="0523",J2台
+http://awei.beimua.com/yes.php?id=18
+#EXTINF:-1 tvg-name="東森新聞台" tvg-logo="https://epg.112114.xyz/logo/東森新聞台.png" group-title="0523",東森新聞台
+http://awei.beimua.com/yes.php?id=1
+#EXTINF:-1 tvg-name="TVB新闻台" tvg-logo="https://epg.112114.xyz/logo/TVB新闻台.png" group-title="0523",TVB新闻台
+http://awei.beimua.com/yes.php?id=3
+#EXTINF:-1 tvg-name="TVBS" tvg-logo="https://epg.112114.xyz/logo/TVBS.png" group-title="0523",TVBS
+http://awei.beimua.com/yes.php?id=4
+#EXTINF:-1 tvg-name="愛爾達體育1台" tvg-logo="https://epg.112114.xyz/logo/愛爾達體育1台.png" group-title="0523",愛爾達體育1台
+http://awei.beimua.com/yes.php?id=5
+#EXTINF:-1 tvg-name="愛爾達體育3台" tvg-logo="https://epg.112114.xyz/logo/愛爾達體育3台.png" group-title="0523",愛爾達體育3台
+http://awei.beimua.com/yes.php?id=7
+#EXTINF:-1 tvg-name="緯來體育台" tvg-logo="https://epg.112114.xyz/logo/緯來體育台.png" group-title="0523",緯來體育台
+http://awei.beimua.com/yes.php?id=8
+#EXTINF:-1 tvg-name="ELEVEN體育1台" tvg-logo="https://epg.112114.xyz/logo/ELEVEN體育1台.png" group-title="0523",ELEVEN體育1台
+http://awei.beimua.com/yes.php?id=9
+#EXTINF:-1 tvg-name="ELEVEN體育2台" tvg-logo="https://epg.112114.xyz/logo/ELEVEN體育2台.png" group-title="0523",ELEVEN體育2台
+http://awei.beimua.com/yes.php?id=10
+#EXTINF:-1 tvg-name="博斯魅力" tvg-logo="https://epg.112114.xyz/logo/博斯魅力.png" group-title="0523",博斯魅力
+http://awei.beimua.com/yes.php?id=21
+#EXTINF:-1 tvg-name="卫视中文台" tvg-logo="https://epg.112114.xyz/logo/卫视中文台.png" group-title="0523",卫视中文台
+http://awei.beimua.com/yes.php?id=20
+#EXTINF:-1 tvg-name="凤凰卫视中文" tvg-logo="https://epg.112114.xyz/logo/凤凰卫视中文.png" group-title="0523",凤凰卫视中文
+http://awei.beimua.com/iptv.php?id=1
+#EXTINF:-1 tvg-name="凤凰卫视资讯" tvg-logo="https://epg.112114.xyz/logo/凤凰卫视资讯.png" group-title="0523",凤凰卫视资讯
+http://awei.beimua.com/iptv.php?id=2
+#EXTINF:-1 tvg-name="中天新闻台" tvg-logo="https://epg.112114.xyz/logo/中天新闻台.png" group-title="0523",中天新闻台
+http://awei.beimua.com/iptv.php?id=43
+#EXTINF:-1 tvg-name="东森新闻台" tvg-logo="https://epg.112114.xyz/logo/东森新闻台.png" group-title="0523",东森新闻台
+http://awei.beimua.com/iptv.php?id=44
+#EXTINF:-1 tvg-name="中视新闻台" tvg-logo="https://epg.112114.xyz/logo/中视新闻台.png" group-title="0523",中视新闻台
+http://awei.beimua.com/iptv.php?id=46
+#EXTINF:-1 tvg-name="台视新闻台" tvg-logo="https://epg.112114.xyz/logo/台视新闻台.png" group-title="0523",台视新闻台
+http://awei.beimua.com/iptv.php?id=47
+#EXTINF:-1 tvg-name="三立新闻台" tvg-logo="https://epg.112114.xyz/logo/三立新闻台.png" group-title="0523",三立新闻台
+http://awei.beimua.com/iptv.php?id=48
+#EXTINF:-1 tvg-name="民视新闻台" tvg-logo="https://epg.112114.xyz/logo/民视新闻台.png" group-title="0523",民视新闻台
+http://awei.beimua.com/iptv.php?id=50
+#EXTINF:-1 tvg-name="华视新闻台" tvg-logo="https://epg.112114.xyz/logo/华视新闻台.png" group-title="0523",华视新闻台
+http://awei.beimua.com/iptv.php?id=51
+#EXTINF:-1 tvg-name="镜电视新闻台" tvg-logo="https://epg.112114.xyz/logo/镜电视新闻台.png" group-title="0523",镜电视新闻台
+http://awei.beimua.com/iptv.php?id=52
+#EXTINF:-1 tvg-name="寰宇新闻台" tvg-logo="https://epg.112114.xyz/logo/寰宇新闻台.png" group-title="0523",寰宇新闻台
+http://awei.beimua.com/iptv.php?id=53
+#EXTINF:-1 tvg-name="TVBS新闻台" tvg-logo="https://epg.112114.xyz/logo/TVBS新闻台.png" group-title="0523",TVBS新闻台
+http://awei.beimua.com/iptv.php?id=54
+#EXTINF:-1 tvg-name="中视HD" tvg-logo="https://epg.112114.xyz/logo/中视HD.png" group-title="0523",中视HD
+http://awei.beimua.com/iptv.php?id=60
+#EXTINF:-1 tvg-name="台视HD" tvg-logo="https://epg.112114.xyz/logo/台视HD.png" group-title="0523",台视HD
+http://awei.beimua.com/iptv.php?id=61
+#EXTINF:-1 tvg-name="民视HD" tvg-logo="https://epg.112114.xyz/logo/民视HD.png" group-title="0523",民视HD
+http://awei.beimua.com/iptv.php?id=62
+#EXTINF:-1 tvg-name="华视HD" tvg-logo="https://epg.112114.xyz/logo/华视HD.png" group-title="0523",华视HD
+http://awei.beimua.com/iptv.php?id=63
+#EXTINF:-1 tvg-name="纬来体育台" tvg-logo="https://epg.112114.xyz/logo/纬来体育台.png" group-title="0523",纬来体育台
+http://awei.beimua.com/iptv.php?id=73
+#EXTINF:-1 tvg-name="纬来日本台" tvg-logo="https://epg.112114.xyz/logo/纬来日本台.png" group-title="0523",纬来日本台
+http://awei.beimua.com/iptv.php?id=74
+#EXTINF:-1 tvg-name="纬来育乐台" tvg-logo="https://epg.112114.xyz/logo/纬来育乐台.png" group-title="0523",纬来育乐台
+http://awei.beimua.com/iptv.php?id=75
+#EXTINF:-1 tvg-name="ELEVEN 1" tvg-logo="https://epg.112114.xyz/logo/ELEVEN 1.png" group-title="0523",ELEVEN 1
+http://awei.beimua.com/iptv.php?id=76
+#EXTINF:-1 tvg-name="ELEVEN 2" tvg-logo="https://epg.112114.xyz/logo/ELEVEN 2.png" group-title="0523",ELEVEN 2
+http://awei.beimua.com/iptv.php?id=77
+#EXTINF:-1 tvg-name="爱尔达体育1台" tvg-logo="https://epg.112114.xyz/logo/爱尔达体育1台.png" group-title="0523",爱尔达体育1台
+http://awei.beimua.com/iptv.php?id=79
+#EXTINF:-1 tvg-name="爱尔达体育2台" tvg-logo="https://epg.112114.xyz/logo/爱尔达体育2台.png" group-title="0523",爱尔达体育2台
+http://awei.beimua.com/iptv.php?id=80
+#EXTINF:-1 tvg-name="爱尔达体育3台" tvg-logo="https://epg.112114.xyz/logo/爱尔达体育3台.png" group-title="0523",爱尔达体育3台
+http://awei.beimua.com/iptv.php?id=81
+#EXTINF:-1 tvg-name="1905电影" tvg-logo="https://epg.112114.xyz/logo/1905电影.png" group-title="0523",1905电影
+http://awei.beimua.com/1905.php
