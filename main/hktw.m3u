@@ -1,4 +1,4 @@
-#EXTM3U
+#EXTM3U url-tvg="http://epg.51zmt.top:8000/e.xml" catchup="append" catchup-source="?playseek=${(b)yyyyMMddHHmmss}-${(e)yyyyMMddHHmmss}"
 #EXTINF:-1 tvg-id="142" tvg-name="凤凰资讯" tvg-logo="http://n.ysyz.top:99/buyaolian/fenghuangzixun.png" group-title="OLD",凤凰资讯
 http://play-live.ifeng.com/live/06OLEEWQKN4.m3u8
 #EXTINF:-1 tvg-id="141" tvg-name="凤凰中文" tvg-logo="http://n.ysyz.top:99/buyaolian/fenghuangzhongwen.png" group-title="OLD",凤凰中文
@@ -614,3 +614,5 @@ http://awei.beimua.com/iptv.php?id=80
 http://awei.beimua.com/iptv.php?id=81
 #EXTINF:-1 tvg-name="1905电影" tvg-logo="https://epg.112114.xyz/logo/1905电影.png" group-title="0523",1905电影
 http://awei.beimua.com/1905.php
+#EXTINF:-1 tvg-name="CCTV1" group-title="IPV6•央视",CCTV1「IPV6」•支持回看
+http://[2409:8087:4402:20:1:1216:401:35]/iptv.cdn.ha.chinamobile.com/PLTV/88888888/224/3221226304/index.m3u8
