@@ -1,4 +1,4 @@
-#EXTM3U
+#EXTM3U x-tvg-url="https://live.fanmingming.cn/e.xml" catchup="append" catchup-source="?playseek=${(b)yyyyMMddHHmmss}-${(e)yyyyMMddHHmmss}"
 #EXTINF:-1 tvg-name="翡翠台" group-title="5566",翡翠台
 https://mysupertv.pendy.dpdns.org/FeiCui/feicui.m3u8
 #EXTINF:-1 tvg-name="popc" group-title="5566",popc
