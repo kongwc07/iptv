@@ -1,0 +1,4354 @@
+mode: rule # 流量处理模式，决定流量路由策略的核心配置项） 可选值：rule（规则模式）、global（全局模式）、direct（直连模式）。当前值：rule（悠哉定义：根据预设规则列表（域名、IP、端口等）判断流量，决定走代理、直连或拒绝，实现精细化控制）
+log-level: info   # 日志级别 info 会输出普通流程，状态，debug 详细的调试信息帮助开发者排查问题通常在开发或调试阶段开启，减少日志可用 warning，error ，silent，# error 只记录错误信息，通常表示发生了严重问题需要关注，warning 记录警告信息提示可能的问题但不影响程序正常运行。日志输出级别（悠哉定义：控制代理服务日志的输出详细程度，用于调试或监控服务运行状态）可选值：debug（调试，输出最详细日志）、info（信息，输出常规运行日志）、warning（警告，仅输出潜在问题日志）、error（错误，仅输出功能异常日志）、silent（静默，不输出任何日志）当前值：info（悠哉定义：仅输出代理启动状态、规则匹配结果、连接建立/断开等常规流程日志，兼顾信息完整性与日志体积）
+global-client-fingerprint: chrome # 全局 TLS 客户端指纹设置 (chrome)。为 VLESS/Vmess/Trojan 等带 TLS 的协议设置“伪装”浏览器指纹。比起每个代理里的 client-fingerprint 设置优先级低。。。设置了全局客户端指纹为chrome。全局TLS客户端指纹（悠哉定义：为所有支持TLS协议的代理节点（VLESS、VMess、Trojan等）设置统一的TLS握手特征，用于模拟主流浏览器的TLS行为，提升连接兼容性）可选值：chrome、firefox、safari、ios、android等（对应不同浏览器/设备的TLS指纹）当前值：chrome（悠哉定义：模拟Chrome浏览器的TLS握手特征，优先级低于单个代理节点内单独配置的client-fingerprint参数）
+unified-delay: true # 统一延迟策略。这个在 Mihomo/Clash Meta 文档里是指延迟测试统一处理（比如 node 挂载的延迟测评）以避免某些协议／节点因为连接方式差异导致时延偏差。。启用统一延迟策略用于统一管理网络延迟或请求处理的延迟策略。统一延迟策略（悠哉定义：控制代理节点延迟测试的计算逻辑，仅适用于Mihomo/Clash Meta版本）可选值：true（启用）、false（禁用）当前值：true（悠哉定义：启用统一延迟测试逻辑，消除不同代理协议（如VLESS、VMess）、不同节点连接方式导致的延迟测评偏差，保证延迟数据的一致性与可比性）
+ipv6: true # 启用 IPv6 支持。表示支持 AAAA 记录解析和 IPv6 流量。。开启IPv6开关,关闭阻断所有IPv6链接和屏蔽DNS请求 AAAA 记录。IPv6支持开关（悠哉定义：控制代理服务是否支持IPv6协议相关功能）可选值：true（启用）、false（禁用）当前值：true（悠哉定义：启用IPv6地址解析（AAAA记录）和IPv6流量代理，若网络环境不支持IPv6，建议设为false避免连接异常）
+allow-lan: true # 允许局域网 (LAN) 的其他设备连接这个代理服务。局网里的设备也能用你的代理。false是禁止局域网访问，即不允许局域网内的设备使用此代理，局域网访问权限（悠哉定义：控制局域网内其他设备是否可通过当前设备IP连接代理服务）可选值：true（允许）、false（禁止）当前值：true（悠哉定义：允许手机、平板、其他电脑等局域网设备，通过当前设备IP和代理端口连接使用代理）
+bind-address: "*"   # 监听所有网络接口（IP）。即不只是 localhost，还包括局域网、外网接口（若有）都可以接受连接。。的*表示服务程序将监听所有可用的网络接口和IP地址接受来自任何IP的连接请求。监听网络接口（悠哉定义：指定代理服务监听的网络接口IP，决定哪些来源的连接可被接收）。可选值："*"（监听所有接口）、具体IP（如192.168.1.100，仅监听该IP对应接口）当前值："*"（悠哉定义：监听设备所有可用网络接口，包括本地回环接口、局域网接口、公网接口（若有），确保不同来源设备可正常连接）
+tcp-concurrent: true # 新增🔔启用 TCP 并发连接，提升多任务下的代理传输效率
+find-process-mode: strict # 新增🔔进程识别模式（strict 为严格模式，精准匹配发起网络请求的进程，避免规则误判）
+redir-port: 7892 # 重定向端口（redirect port）一般用于大陆直连 / 重定向方式，把 IP／端口重定向到代理里（Linux 下 iptables + redir 模式）。端口转发规则重定向端口流量重定向端口（悠哉定义：主要用于Linux系统，配合iptables防火墙规则，将指定IP/端口的流量重定向至该端口，实现特定流量代理），当前值：7892（悠哉无固定默认值，需根据系统防火墙配置调整，Windows/macOS系统通常无需配置）
+tproxy-port: 7893 # 透明代理端口，当网络支持 TPROXY 模式时，把流量透明捕获（通常在路由器或内核支持）到这个端口进行处理。。表示配置中的tproxy（透明代理）端口号为 7893。这是网络代理相关的参数，用于指定代理服务监听的端口号，即代理程序会在该端口等待连接，从而实现代理功能。 透明代理端口（悠哉定义：需系统内核支持TPROXY模块，用于透明捕获网络流量并转发至代理，无需客户端手动配置代理，常用于路由器场景），当前值：7893（悠哉无固定默认值，需依赖系统内核特性，普通桌面/移动设备较少使用）
+port: 7890 # HTTP代理端口TCP，HTTP代理监听端口，用于接收并处理HTTP协议代理请求的端口，仅支持TCP流量）当前值：7890（悠哉无固定默认值，为常用推荐端口，需确保与其他服务端口不冲突）
+socks-port: 7891 # Socks5代理端口，支持TCP和UDP协议，SOCKS5代理监听端口（悠哉定义：用于接收并处理SOCKS5协议代理请求的端口，支持TCP与UDP流量），当前值：7891（悠哉无固定默认值，为常用推荐端口，需确保与其他服务端口不冲突）
+mixed-port: 10801 # HTTP和SOCKS代理TCP和UDP混合端口，方便一些软件直接用这个端口不用分开设 HTTP和SOCKS。 HTTP与SOCKS5混合代理端口（悠哉定义：统一监听HTTP和SOCKS5协议的端口，无需区分协议类型，同时处理两种协议的TCP/UDP流量），当前值：10801（悠哉无固定默认值，为常用推荐端口，需确保与其他服务端口不冲突）
+authentication:                                       # 代理身份验证（为，HTTP、SOCKS5、mixed端口设置连接验证机制，防止未授权设备使用代理，提升安全性）配置格式：- 用户名:密码（支持配置多组验证信息）当前配置：- youzai:TG@fuchenyouzaibot（悠哉定义：客户端连接对应代理端口时，需输入用户名“youzai”、密码“TG@fuchenyouzaibot”，验证通过后方可使用代理）。。安全策略这是给代理端口 (port / socks-port / mixed-port) 局域网连接用的用户名和密码。当你用 Clash 的代理（HTTP/SOCKS/Mixed）时，客户端会弹出验证框要求输入用户名密码youzai用户名:密码TG@fuchenyouzaibot
+  - youzai:TG@fuchenyouzaibot            # 用户名密码 列里的地址不需要密码
+skip-auth-prefixes:                                  # 白名单跳过身份验证的局域网内网私信有地址范围。包含局域网 +私有网段 +回环就够了。这些 IP 来源的连接不需要输入用户名密码。免验证IP段（悠哉定义：指定无需进行身份验证即可连接代理的IP地址范围，通常用于可信的局域网或本地地址，避免内部设备重复验证） 配置格式：- IP段（支持IPv4/IPv6段，遵循CIDR格式）
+  - ::1/128                                                 # ipv6本机。IPv6的本地回环地址（loopback address）。类似IPv4的127.0.0.1，用于本机通信。
+  - fc00::/7                                                # ipv6内网。IPv6的Unique Local Addresses (ULA)，类似IPv4的私有地址，用于内部通信，不在公网路由。
+  - fd00::/8                                                # IPv6的ULA的范围之一专用于私有网络，通常由组织自行分配
+  - fe80::/10                                              # IPv6链路本地地址。- 0.0.0.0/8代表全部IPv4地址，特殊用途包含：默认路由（0.0.0.0/0）0.0.0.0/8（“这是一个范围，用于特殊目的”）
+  - 10.0.0.0/8                                             # 内网常用网段。专用IPv4地址，用于组织内部网络，不在互联网直接访问。
+  - 100.64.0.0/10                                       # 用于Carrier-Grade NAT（大规模网络地址转换），由移动或ISP内部使用。
+  - 127.0.0.0/8                                           # 本地回环。IPv4的loopback（回环）地址范围，用于本机测试。
+  - 172.16.0.0/12                                       # 内网常用网段。专用IPv4地址。常用于企业或组织内部网络。
+  - 192.168.0.0/16                                     # 家庭局域网络。最常用的私有IPv4地址段，用于家庭和小型局域网。
+  - 198.18.0.0/16                                       # 保留给网络测试和设备间的测试用途，不用于路由。
+  - 224.0.0.0/4                                           # 多播地址范围，IPv4多播通信使用。 
+
+
+# 外部面板
+external-controller: 127.0.0.1:9090 # 外部控制接口（用于通过 API 管理 Clash，如脚本控制、第三方面板连接）
+secret: "TG@fuchenyouzaibot@9090" # 外部控制接口令牌  token是 TG@fuchenyouzaibot@9090。验证方式（悠哉规范）：客户端（如GUI工具）访问external-controller时，需在HTTP请求头中携带“Authorization: Bearer [secret值]”，例如“Authorization: Bearer TG@fuchenyouzaibot@9090”，验证通过后方可执行操作。。当GUI / API 客户端去访问external-controller时需要在请求头里带上: Authorization: Bearer TG@fuchenyouzaibot@9090。。如果你用 GUI（例如 Clash Dashboard 或者 Clash Verge）：在 GUI 的配置里，填上地址：http://127.0.0.1:9090:TG@fuchenyouzaibot@9090。。如果用 curl 或者脚本调用 REST API：例如获取当前配置：curl -H "Authorization: Bearer TG@fuchenyouzaibot@9090" http://127.0.0.1:9090/configs    这样 Clash 才会接受请求。。。如果你把 external-controller: 0.0.0.0:9090 暴露到公网，。。一定要加上 secret，否则别人可以远程完全控制你的 Clash# 控制面板 / API，。。 如果你人在外地，访问 Clash 控制面板：http://你的公网IP:9090: Authorization: Bearer TG@fuchenyouzaibot@2025。。GUI 工具（Clash Dashboard / Clash Verge / Meta UI）设置：地址：http://你的公网IP:9090: TG@fuchenyouzaibot@2025
+# external-ui: ui # 指定本地Web管理界面的文件夹名称为  ui ，客户端会从该文件夹加载自定义界面文件（需先将界面压缩包解压到对应目录）。
+# external-ui-url: "https://github.com/MetaCubeX/metacubexd/archive/refs/heads/gh-pages.zip" # 指定远程自定义 Web 界面（这里是 MetaCubeX 官方的 metacubexd 界面）的下载链接，客户端会自动下载并使用该界面，无需手动解压。
+
+
+# 嗅探
+sniffer:                 # 新增🔔流量嗅探（Sniffer）模块配置：自动识别网络流量类型，提升代理规则匹配精度
+  enable: true      # 核心开关：启用流量嗅探功能（true=开启，false=关闭）
+  sniff:                  # 针对不同协议类型的具体嗅探规则配置
+    HTTP:                    # HTTP 协议嗅探配置：处理未加密的 HTTP 流量
+      ports: [80, 8080-8880]           # 需嗅探的端口：80（HTTP默认端口）、8080-8880（常见HTTP代理/服务端口范围）
+      override-destination: true        # 关键功能：用嗅探到的真实目标地址覆盖原请求地址，避免跳转导致规则失效
+    TLS:                                            # TLS 协议嗅探配置：处理加密的 TLS 流量（如 HTTPS 网页、App 加密请求）
+      ports: [443, 8443]                     # 需嗅探的端口：443（HTTPS默认端口）、8443（常见HTTPS备选端口）
+    QUIC:                                               # QUIC 协议嗅探配置：处理基于 UDP 的 QUIC 流量（如部分 App 高速传输、Google 服务）
+      ports: [443, 8443]                       # 需嗅探的端口：QUIC 常复用 443/8443 端口，与 TLS 端口一致
+  skip-domain:                           # 嗅探白名单：指定无需嗅探的域名，避免影响基础功能
+    - "Mijia Cloud"                   # 米家云服务域名：跳过嗅探，确保米家设备（如摄像头、家电）正常联网
+    - "+.push.apple.com"              # 苹果推送域名（通配符+表示所有子域名）：跳过嗅探，保障苹果设备推送通知正常
+
+
+
+# 进站
+tun:       # 新增🔔TUN 模式配置：Clash Meta 核心网络虚拟化功能，实现全局流量拦截与转发。
+  enable: true    # false为不启用 。启用 TUN 模式，（接管系统底层流量，实现全局代理，无需手动配置系统代理）
+  stack: mixed  # TUN 网络栈类型："mixed"表示同时支持 IPv4 和 IPv6 流量，适配双栈网络环境。  另外🔔TUN 网络栈选择（gvisor 为谷歌开源栈，隔离性强、稳定性高，适合对安全和兼容有要求的场景）
+  dns-hijack:     # DNS 劫持规则（劫持所有 53 端口的 DNS 请求，防止 DNS 泄漏，确保域名解析走代理）
+    - "any:53"     # 劫持 UDP 协议的 53 端口 DNS 请求
+    - "tcp://any:53"  # 劫持 TCP 协议的 53 端口 DNS 请求
+  auto-route: true    # 自动配置系统路由（无需手动修改路由表，TUN 模式自动管理流量转发）
+  auto-redirect: true    # 自动重定向系统流量（将系统所有流量自动导入 TUN 接口，实现全局代理覆盖）
+  auto-detect-interface: true    # 自动检测网络接口（动态适配当前使用的网卡，如切换 WiFi/有线网络时无需重新配置）
+
+
+
+dns: # DNS设置用于管理代理服务的域名解析逻辑，包括解析服务器、策略、安全过滤等，决定域名如何转换为IP地址）
+  enable: true # 启用DNS接管系统和监听。接管后系统/应用的 DNS 请求将由代理处理。 启用 DNS 接管，代理将处理所有相关 DNS 请求，实现自定义解析策略。值为false时不启动。
+  listen: 0.0.0.0:1053 # 表示相关程序正在监听服务器上所有网络接口的1053端口。这意味着Clash或Clash Meta等工具配置为通过1053端口接收网络请求，通常用于DNS相关功能，可能会将域名解析请求导向该端口进行处理，以便实现自定义的DNS解析策略，如域名分流、使用特定的DNS服务器等。
+  ipv6: true # DNS部分是否解析 AAAA / IPv6 地址。。。如为false则回应AAAA的空解析.允许相关网络流量通过IPv6协议进行传输，可充分利用IPv6的优势，如拥有更大的地址空间、更好的移动性支持等，有助于提高网络连接的效率和稳定性。
+  cache-algorithm: arc # DNS缓存算法，指定 DNS 解析结果的缓存管理算法，影响缓存命中率和资源占用）。可选值：arc、lru、fifo 等。当前值：arc（悠哉定义：使用 Adaptive Replacement Cache 算法，自适应结合 LRU（最近最少使用）和 LFU（最不常用）特性，根据访问模式动态调整缓存，提升命中率，适配复杂网络场景）Adaptive Replacement Cache 是全称，DNS 缓存算法用 ARC（Adaptive Replacement Cache），比纯 LRU/FIFO 有更好适应性。。。。使用 ARC 缓存算法，是一种自适应的缓存替换算法，旨在结合最近最少使用（LRU）和最近最少使用（LFU）的优点，通过动态调整缓存中不同数据组的比例，提高缓存命中率。• 提升系统缓存效率，减少数据读取延迟 。广泛应用于操作系统、数据库、存储系统等场景中  。自动适应不同的访问模式，保证缓存性能的稳定性。简而言之，ARC通过智能的策略管理缓存内容，从而优化性能，更适应多变的访问态势。# 值为lru: Least Recently Used时是一种缓存替换算法，全称为“最近最少使用”。它的基本思想是：当缓存满了需要淘汰数据时，优先淘汰最长时间未被访问过的内容。这样能够保证经常使用的数据留在缓存中，提高命中率。用途： 在有限的内存空间中，缓存频繁访问的数据，减少访问延迟，提高系统性能。例如，网页浏览器缓存网页，数据库缓存查询结果，文件系统缓存等都常用 lru 算法。主要目标：保持“最近被访问过”的数据在缓存中。   适用场景：访问具有局部性的数据访问模式。   优点：实现简单，效果良好。  缺点：对于某些访问模式可能不够理想，比如周期性变化的数据可能频繁被淘汰。悠哉优化配置文件TG@fucgenyouzaibot
+  prefer-h3: true # 是Clash/Mihomo中控制 是否优先使用 HTTP/3 协议 进行 DNS 解析（特指 DoH/DoT 加密解析场景）的配置项，取值为  true  或  false 。简单说：- 设  true ：当 DNS 服务器（如 Cloudflare、Google）支持 HTTP/3 时，会优先用 HTTP/3 解析，比 HTTP/2/1.1 更快，有 0-RTT 连接 和 抗网络阻塞 优势），适合对延迟敏感的场景（如访问境外网站、国际服游戏）。- 设  false ：不主动优先用 HTTP/3，会默认用 HTTP/2 或 HTTP/1.1 解析，兼容性更强（避免部分老旧网络或服务器不支持 HTTP/3 导致的解析失败）。配置中已设  prefer-h3: true ，搭配支持 HTTP/3 的 DNS 服务器（如 Cloudflare 1.1.1.1、Google 8.8.8.8），能最大化 DNS 解析效率，无需修改。HTTP/3 偏好设置（悠哉定义：控制在使用 DoH（DNS over HTTPS）或 DoT（DNS over TLS）时，是否优先选择 HTTP/3 协议）可选值：true（偏好）、false（不偏好）当前值：true（悠哉定义：在目标 DNS 服务器支持 HTTP/3 时，优先使用该协议进行加密解析，利用其低延迟、抗阻塞特性；设为 false 则优先使用 HTTP/2 或 HTTP/1.1）
+  use-hosts: true  # 表示 启用自定义 hosts 规则功能，即 Clash/Mihomo 解析域名时，会优先参考你在当前配置文件中手动写的  hosts  映射（比如你自己定义的  baidu.com → 180.101.50.242 ），再去走 DNS 服务器解析。，简单说：这个开关控制“配置文件里的自定义 hosts 是否生效”。如果设为  false ，就算你在配置里写了  hosts  规则，也不会被使用，域名解析会直接跳过自定义 hosts 去查 DNS；设为  true ，自定义 hosts 才会优先生效，适合需要手动绑定特定域名和 IP 的场景（比如解决某些域名解析异常问题）。自定义 hosts 启用（悠哉定义：控制是否使用配置中自定义的 hosts 映射规则，自定义 hosts 优先级高于系统 hosts）可选值：true（启用）、false（禁用）当前值：true（悠哉定义：启用自定义 hosts，代理将优先使用配置内定义的域名-IP 映射进行解析）
+  use-system-hosts: false # 是 Clash/Mihomo 中控制，是否使用设备系统自带 hosts 文件，的配置项，核心作用是决定域名解析时是否参考系统本身的域名-IP映射规则，有  true  和  false  两种取值：， use-system-hosts: true ：解析域名时，会优先参考设备系统自带的 hosts 文件（比如电脑  C:\Windows\System32\drivers\etc\hosts 、手机  /system/etc/hosts ），系统 hosts 里写的“域名→IP”映射会生效。，use-system-hosts: false ：解析域名时，完全忽略设备系统的 hosts 文件，只按当前 Clash/Mihomo 配置里的 DNS 规则（如自定义 hosts、指定的 DNS 服务器）来解析。系统 hosts 启用（悠哉定义：控制是否使用操作系统自带的 hosts 文件规则）可选值：true（启用）、false（禁用）当前值：false（悠哉定义：禁用系统 hosts，代理解析时不参考操作系统自带的 hosts 规则，仅依赖自定义 hosts 和配置的 DNS 服务器，避免系统 hosts 干扰解析结果）
+  respect-rules: true # 表示 DNS 查询请求本身会遵循你配置的流量分流规则，简单说就是“DNS 请求也会像普通网页请求一样，被判断该直连还是走代理”。，比如：，当你解析境外域名（如  google.com ）时，若分流规则判定“境外请求走代理”，则这个 DNS 查询会跟着走代理发送到境外 DNS 服务器（避免被污染）；，当你解析国内域名（如  baidu.com ）时，若规则判定“国内请求直连”，则 DNS 查询会直接通过本地网络发送到国内 DNS 服务器（更快更稳定）。，反之，若设为  false ，DNS 查询会“无视分流规则”，可能导致境外 DNS 请求被拦截（解析失败），或国内 DNS 请求绕远路走代理（变慢），所以在需要“精准控制 DNS 解析路径”的场景（如代理环境）下， true  是更合理的设置。DNS 查询遵循分流规则（悠哉定义：控制 DNS 查询请求本身是否跟随代理的流量分流规则，决定 DNS 请求走直连还是代理）可选值：true（遵循）、false（不遵循）当前值：true（悠哉定义：DNS 查询请求将按分流规则判断路由，如国内 DNS 请求直连、境外 DNS 请求走代理，需配合 proxy-server-nameserver 使用；设为 false 则 DNS 请求不跟随分流规则）
+
+  default-nameserver: # 核心含义仅用于解析DoH/DoT等加密DNS服务器，自身域名，的基础DNS列表。（如解析“dns.alidns.com”以获取阿里DoH服务器的IP），不处理普通网站域名解析。不参与普通域名（如百度、谷歌）的解析。
+    - 223.5.5.5                    # 阿里云DNS 归属地 杭州  域名 public1.alidns.com 加密方式原生支持多加密协议，基础版支持UDP/TCP（端口53）进阶版 支持 DoH是https://dns.alidns.com/dns-query和DoT是tls://dns.alidns.com:853
+    - 8.8.8.8
+    - 119.29.29.29                # DNSPod DNS+归属地泛播 腾讯旗下 域名pdns.dnspod.cn，国内公共DNS中支持DNSSEC协议的代表服务之一，双节点设计防故障。加密方式：原生支持多协议，基础版支持UDP/TCP（端口53），进阶版支持DoH是https://doh.pub/dns-query和DoT是tls://dns.pub:853。
+    - 180.76.76.76                # 百度 DNS 归属地北京 public-dns-a.baidu.com    核心定位安全+智能解析，加密方式：支持多协议解析，基础版支持 UDP/TCP（端口53），进阶版支持 DoH 加密（官方推荐  https://doh.baidu.com/dns-query ），可有效防止 DNS 劫持与数据泄露，适合对安全性有基础需求的场景。
+    - 114.114.114.114            # 114 DNS 归属地江苏南京 public1.114dns.com ，加密方式：基础版仅支持 UDP/TCP（端口 53），无原生 DoH/DoT 加密
+    - 2400:3200::1               # 阿里云IPv6
+    - 2400:3200:baba::1       # 阿里云IPv6
+    - 2400:da00::6666         # 百度IPv6 DNS
+    - 2001:4860:4860::8888     # 中国境外 Google IPv6 DNS
+
+
+  direct-nameserver: # 点击切换到代理软件中“全球直连”分组节点时，设备所有网络流量（尤其是国内域名相关）都会走 DIRECT 直连模式网络，此时会自动触发悠哉配置的 direct-nameserver 列表中的例如（阿里云、腾讯等DNS）来解析域名。配置格式，数组形式，填写 DNS 服务器ip或地址（支持“- system”（系统默认 DNS）或具体 IP/地址）或运营商提供的本地dns地址，就近原则稳定无劫持的情况下可以在首位填写就近的DNSip或地址分运营商需要自己填写
+    - system                              # 代表调用设备自身默认DNS   
+    - 8.8.8.8
+    - 2001:4860:4860::8888     # 中国境外 Google IPv6 DNS
+  direct-nameserver-follow-policy: false # 可选值true跟随，fals。不跟随。 当前值false（悠哉定义直连场景的 DNS 请求不跟随分流策略，仅固定使用 direct-nameserver 配置的 DNS 服务器，避免分流规则干扰直连解析）。该配置仅作用于，直连场景，（不使用代理时），表示直连网络下的DNS解析不跟随系统的分流策略（如VPN分流规则、域名分组策略等），仅固定使用  direct-nameserver  中配置的DNS
+
+  nameserver-policy: # 指定域名的查询dns解析服务器，优先于 nameserver/fallback 查询 。
+    .arpa: # 本地局域网反向解析域名，用局域网的DNS（支持多备用）对 .arpa （反向解析域名）指定局域网DNS，避免局域网设备访问异常。 写法".arpa": "192.168.3.1"
+      - "192.168.3.1" # 局域网 ipv4的dns地址
+      - "fe80::5221:ecff:fe8d:1b27" # 局域网 ipv6的dns地址
+      - "192.168.1.1" # 局域网 ipv4的dns地址
+      - "10.0.0.1" # 本地局域网 DNS。DNS策略，当查询.arpa域名时使用本地DNS服务器10.0.0.1
+    geosite:cn: # 中国境内域名，优先对geosite:cn国内域名，指定国内DoH解析，确保国内解析最快。用中国境内DoH（解析快、抗污染）（DNS over HTTPS，基于HTTPS的DNS协议）
+      - https://dns.alidns.com/dns-query # 国内DoH，均以 https:// 开头，是标准的DOH查询地址，（DNS over HTTPS，基于HTTPS的DNS协议）
+      - https://doh.pub/dns-query # 国内DoH，均以 https:// 开头，是标准的DOH查询地址，（DNS over HTTPS，基于HTTPS的DNS协议）
+      - https://doh.baidu.com/dns-query # 国内DoH，均以 https:// 开头，是标准的DOH查询地址，（DNS over HTTPS，基于HTTPS的DNS协议）
+      - https://doh.114dns.com/dns-query # 国内DoH，均以 https:// 开头，是标准的DOH查询地址，（DNS over HTTPS，基于HTTPS的DNS协议）
+    geosite:private: # 私有域名，如局域网设备，优先对，geosite:private （私有域名）指定国内DoH解析，确保国内解析最快。用中国境内DoH，保障稳定性。 （DNS over HTTPS，基于HTTPS的DNS协议）
+      - https://dns.alidns.com/dns-query # 国内DoH，均以 https:// 开头，是标准的DOH查询地址，（DNS over HTTPS，基于HTTPS的DNS协议）
+      - https://doh.pub/dns-query # 国内DoH，均以 https:// 开头，是标准的DOH查询地址，（DNS over HTTPS，基于HTTPS的DNS协议）
+      - https://doh.baidu.com/dns-query # 国内DoH，均以 https:// 开头，是标准的DOH查询地址，（DNS over HTTPS，基于HTTPS的DNS协议）
+      - https://doh.114dns.com/dns-query # 国内DoH，均以 https:// 开头，是标准的DOH查询地址，（DNS over HTTPS，基于HTTPS的DNS协议）
+
+  nameserver: # 中国境内主要的加密DNS解析服务器，用于普通域名，优先使用DoH和DoT 等加密解析方式，提升安全性。配置格式：数组形式，填写 DNS 服务器地址（支持 DoH、DoT、TCP/UDP 格式）
+    - https://dns.alidns.com/dns-query # 阿里doh标准加密，国内DoH，均以 https:// 开头，是标准的DOH查询地址，（DNS over HTTPS，基于HTTPS的DNS协议）
+    - https://doh.pub/dns-query # 国内DoH，均以 https:// 开头，是标准的DOH查询地址，（DNS over HTTPS，基于HTTPS的DNS协议）
+    - https://doh.baidu.com/dns-query # 国内DoH，均以 https:// 开头，是标准的DOH查询地址，（DNS over HTTPS，基于HTTPS的DNS协议）
+    - https://doh.114dns.com/dns-query # 国内DoH，均以 https:// 开头，是标准的DOH查询地址，（DNS over HTTPS，基于HTTPS的DNS协议）
+    - tls://dns.alidns.com:853 # DOT是DNS over TLS，基于TLS的DNS协议，与DOH协议不同。
+    - https://223.5.5.5/dns-query # 阿里DoH（补充加密）
+    - https://[2400:3200::1]/dns-query # 阿里云IPv6 DoH（加密，国内稳定）
+    - https://[2400:3200:baba::1]/dns-query # 阿里云IPv6 DoH（加密，国内稳定）
+    - https://[2400:da00::6666]/dns-query # 百度IPv6 DNS
+    - tcp://223.5.5.5:53 # 阿里云TCP（首选保底）
+    - tcp://180.76.76.76:53 # 百度TCP（次选保底）
+    - tls://223.5.5.5  # 阿里云 DNS（TLS 加密）：加密传输 DNS 请求，防监听和篡改
+    - tls://223.6.6.6  # 阿里云 DNS（TLS 加密）：同上，作为备用提升解析稳定性
+
+  fallback-filter: # 防止中国境内域名，误走境外 DNS（关键！避免淘宝/微信走境外解析变慢）启用基于地理位置的 DNS 过滤 用来判断哪些解析结果被视为污染，在  fallback-filter  里，“污染”指的是 DNS 解析结果被篡改/无效 的情况——简单说就是你想解析某个域名（比如  youtube.com ），但本地 DNS 服务器（尤其国内未代理的 DNS）返回的不是真实可用的 IP，而是一个“假IP”（比如无法访问的内网IP、无效IP，或被屏蔽的IP），导致你无法连接目标网站。需要 fallback。含 geoip 判断（IP 所在国家不是 CN），geosite (如 GFW 被广泛使用的域名集)，ipcidr 列表等。fallback-filter先通过 geoip （境外IP触发）、 ipcidr （无效IP过滤）、 geosite:gfw （境外域名）判断污染，再用 domain 补充特殊域名，避免误判国内域名。备用 DNS 过滤策略（悠哉定义：用于判断主要 DNS 解析结果是否有效/污染，若结果符合过滤条件，则触发备用 DNS 重新解析，确保解析结果可用）  
+    geoip: true # 启用基于IP地域筛选，仅当 DNS 解析结果为“境外 IP”时，才使用 fallback 境外备用 DNS服务器解析。启用GeoIP判断：通过IP归属地筛选污染结果
+    geoip-code: CN # 明确以中国 IP为基准，国内 IP 结果走 nameserver，境外 IP 结果走 fallback。当前值CN仅信任归属地为中国（CN）的 IP 结果，非 CN  IP 结果视为可能污染，触发备用 DNS服务器解析）
+    ipcidr: # 排除无效 IP。避免解析到“被篡改的假地址”作用：指定一批“无效/非公网 IP 段”，若 DNS 解析出的 IP 属于这些段，直接视为“无效结果”，触发备用dns服务器解析 fallback。。。排除特殊IP段：基于IP段判断（排除无效IP）。。这些IP段均为非公网/无效IP，解析到即视为污染限制特定的 IP 段。。。    原理部分污染 DNS会返回ipcidr中的内网/无效 IP， ipcidr 规则能，直接过滤掉这些假地址，避免设备连接无效 IP 导致网络卡顿触发fallback规则让其走正确的阳光大道。IP 段过滤（悠哉定义：指定无效/非公网 IP 段，若 DNS 解析结果属于这些 IP 段，则视为无效结果，触发备用 DNS 重新解析）配置格式：数组形式，填写 CIDR 格式的 IP 段。当前值：[0.0.0.0/8, ..., fe80::/10]（悠哉定义：过滤内网、回环、多播等非公网/无效 IP 段，避免设备连接无效 IP 导致网络异常）
+      - 0.0.0.0/8                   # 特殊用途IP（如默认路由，无实际服务）
+      - 10.0.0.0/8                 # 企业/校园内网IP（如10.1.1.1，非公网）
+      - 100.64.0.0/10           # 用于Carrier-Grade NAT（大规模网络地址转换），由移动或ISP内部使用。（CGNAT 中心地址）
+      - 127.0.0.0/8                # 本机回环IP（如127.0.0.1，仅本机通信）
+      - 169.254.0.0/16          # 设备直连临时IP（如两台电脑直连，非公网）
+      - 172.16.0.0/12            # 企业内网IP（如172.16.1.1，非公网）
+      - 192.168.0.0/16          # 家庭内网IP（如192.168.1.100，非公网）
+      - 192.0.0.0/24              # IETF 等保留
+      - 192.0.2.0/24              # TEST-NET-1
+      - 198.18.0.0/15            # 网络设备benchmark / testing
+      - 198.51.100.0/24        # TEST-NET-2
+      - 203.0.113.0/24          # TEST-NET 3
+      - 224.0.0.0/4                 # 多播IP（用于视频会议，非单播公网IP）
+      - 240.0.0.0/4                 # 未分配公网IP段（解析到即无效），表示IPv4地址范围从224.0.0.0到239.255.255.255涵盖了IPv4中的多播地址范围，该范围用于多播通信，不是普通的单播地址。多播地址范围，IPv4多播通信使用。这个范围的地址多数用于多点传送，适用于特定的网络应用，比如视频会议、多媒体流等。 # 并且IP地址不在240.0.0.0/4的范围内；才会应用这个备用的过滤策略。配置项表示当主要的过滤规则无法匹配时，使用的备用过滤策略。# youzai:TG@fucgenyouzaibot# 悠哉优化配置文件youzai:TG@fucgenyouzaibot
+      - ::1/128                        # ipv6本机。IPv6的本地回环地址（loopback address）。类似IPv4的127.0.0.1，用于本机通信。
+      - fc00::/7                       # ipv6内网。IPv6的Unique Local Addresses (ULA)，类似IPv4的私有地址，用于内部通信，不在公网路由。
+      - fd00::/8                      # IPv6的ULA的范围之一专用于私有网络，通常由组织自行分配
+      - fe80::/10                    # IPv6链路本地地址。  
+    geosite: # GeoSite过滤（悠哉定义：通过内置 GeoSite 域名库匹配 DNS 请求域名，若域名属于指定分类判定为污染，则触发备用 DNS 服务器解析。配置格式：数组形式，填写 GeoSite 分类标识。当前值：[gfw]（悠哉定义：匹配内置“gfw”分类的域名（即需境外访问的域名），这类域名的解析请求直接触发备用 DNS，确保解析有效）
+      - gfw # 使用GFW防火长城相关的规则，按域名分类过滤，精准匹配境外网站，作用：调用 Clash 内置的“域名分类库”，直接匹配某类特定域名，这类域名的解析结果会强制触发 备用dns服务器fallback。     # GeoSite "gfw" 分类（悠哉定义：包含常见需境外访问的域名，如 YouTube、Facebook 等，这类域名解析需走备用 DNS）。引用软件内置含所有境外访问的域名，GFW域名集覆盖99%需境外解析的域名，直接调用Clash内置的「GFW域名库」（含YouTube、Facebook等被屏蔽域名），无需手动列直接引用GFW域名集，覆盖所有需境外解析的域名（无需手动列）个闲着domain有些多余？悠哉认为并非如此就像我上次引用的那个广告规则全球拦截应用净化就是不准确的导致使用软件或网站异常严重至不能使用。   
+    domain: # 域名过滤（悠哉定义：手动指定需触发备用 DNS 的域名，domain最好只列出补充域（例如 CDN / 广告子域），不要重复 geosite 列表。若 DNS 请求域名匹配，则触发备用 DNS 解析，补充 GeoSite 覆盖不到的场景）配置格式：数组形式，填写域名（支持通配符“+.”匹配子域名）手动指定的漏网的特殊域名（如  +.youtube.com ），直接按“可能被污染”处理，触发备用解析。 作用是强制让它们触发，境外备用解析（fallback），而非使用国内 DNS 解析。。4手动补充特殊域名：基于具体域名判断（自定义特殊域名）。覆盖GeoIP/GeoSite可能遗漏的境外域名  指定域名列表,允许访问以下网站
+      - '+.google.com'                               # Google 主域名及子域名（悠哉定义：通配符匹配所有 Google 子域名，解析需走备用 DNS）作用手动添加单个/一类特殊域名，这些域名的解析结果会触发 fallback，补充上述 3 个规则覆盖不到的场景。
+      - '+.googlevideo.com'                      # Google 视频域名及子域名（悠哉定义：YouTube 视频资源域名，解析需走备用 DNS） +.表示“匹配该域名及其所有子域名”，比如  +.githubassets.com  会匹配  a.githubassets.com 、 b.githubassets.com  等；
+      - '+.googleapis.cn'                            # 谷歌中国 API 域名及子域名（悠哉定义：部分功能需境外解析，需走备用 DNS）
+      - '+.facebook.com'                            # Facebook 域名及子域名（悠哉定义：境外社交平台，解析需走备用 DNS）
+      - '+.youtube.com'                              # YouTube 域名及子域名（悠哉定义：境外视频平台，解析需走备用 DNS）
+      - '+.githubassets.com'                      # GitHub 静态资源域名及子域名（悠哉定义：部分场景解析异常，需走备用 DNS）GitHub静态资源域名（偶尔解析异常）
+      - google.com                                     # Google 主域名（悠哉定义：境外搜索服务，解析需走备用 DNS）
+      - googlevideo.com                            # Google 视频主域名（悠哉定义：YouTube 视频资源主域名，解析需走备用 DNS）YouTube 的视频托管/CDN 域，常用于视频流（视频实际媒体文件通常来自这个域）。
+      - googleapis.cn                                  # 谷歌中国 API 主域名（悠哉定义：部分功能需境外解析，需走备用 DNS）谷歌中国 API 域名，虽带 “.cn”，但部分功能需境外解析；
+      - googleadservices.com                    # Google 广告域名（悠哉定义：境外广告服务相关域名，解析需走备用 DNS 以确保有效性）
+      - googlesyndication.com                  # Google 广告联盟域名（悠哉定义：承载 Google 广告分发的域名，需通过备用 DNS 解析）
+      - adservice.google.com                     # Google 广告服务域名（悠哉定义：Google 广告核心服务域名，解析需走备用 DNS）
+      - facebook.com                                  # Facebook 主域名（悠哉定义：境外社交平台主域名，解析需走备用 DNS）
+      - youtube.com                                   # YouTube 主域名（悠哉定义：境外视频平台主域名，解析需走备用 DNS）
+      - ads                                                   # 广告类通用域名（悠哉定义：匹配含“ads”标识的广告域名，解析需走备用 DNS 以过滤异常结果）ads.匹配所有含ads.的广告域名过滤广告解析污染
+      - doubleclick.net                               # Google 双击广告域名（悠哉定义：Google 广告投放核心域名，解析需走备用 DNS）谷歌广告域名（需境外解析）
+      - ads.youtube.com                            # YouTube 广告域名（悠哉定义：YouTube 平台广告服务域名，解析需走备用 DNS）  
+
+  enhanced-mode: fake-ip                      # 可选值，fake-ip（伪装 IP 模式）、redir-host（真实 IP 重定向模式）当前值：fake-ip（悠哉定义：所有域名解析均返回 198.18.0.0/16 段的“伪装 IP”，代理内部映射真实 IP，可隐藏真实 IP 并提升解析效率，避免部分网络环境下的解析污染）
+  fake-ip-range: 198.18.0.1/16               # 当前值使用 198.18.0.1 至 198.18.255.255 网段作为伪装 IP 池，该网段为 IANA 保留测试网段，无实际公网服务，不会与真实 IP 冲突
+  fake-ip-filter-mode: blacklist              # 伪装IP过滤模式（悠哉定义：指定 fake-ip 模式下的域名过滤策略，决定哪些域名不使用伪装 IP 解析）可选值：blacklist（黑名单模式）、whitelist（白名单模式）当前值：blacklist（悠哉定义：黑名单模式，即“fake-ip-filter”列表中的域名不使用伪装 IP 解析，直接返回真实 IP；未在列表中的域名正常使用伪装 IP）黑名单过滤模式，伪IP过滤模式为黑名单，即排除列表中的域名或IP。fake-ip-filter-mode解释 blacklist黑名单或whitelist白名单 ，此配置项用于控制 fake-ip 的过滤模式。  # blacklist黑名单，匹配到的域名会被过滤（不返回 fake-ip），未匹配的则正常返回 fake-ip。  设置为blacklist，可以只屏蔽特定域名的 fake-ip响应。# whitelist白名单，只有匹配到的域名才会返回 fake-ip，未匹配的会被过滤。设置为whitelist，可以只允许特定域名返回 fake-ip，其他的均不返回，适用于只需要对某些网站进行代理或过滤的场景。
+  fake-ip-filter:                      # 过滤列表以下域名不走虚拟IP解析，避免核心服务连接异常fake-ip-filter  数组「例外列表」：这些域名不使用 Fake-IP 解析，直接用真实 IP（避免部分场景因 Fake-IP 失效）。伪装IP不适用于*.lan域名。  伪装 IP 过滤列表（悠哉定义：配合 fake-ip-filter-mode 使用，列表中的域名不使用伪装 IP 解析，避免因伪装 IP 导致局域网服务、系统核心服务连接异常）配置格式：数组形式，填写域名（支持通配符“*.”匹配子域名）当前值：[*.lan, ..., pool.ntp.org]（悠哉定义：包含局域网服务、系统网络检测、时间同步等核心域名，确保这些服务用真实 IP 解析，避免功能失效）
+    - "+.msftncsi.com"                   # Windows 网络检测域名（悠哉定义：Windows 系统判断网络连通性的核心域名，需真实 IP 解析）Windows 系统的“网络连通性检测”域名，用真实 IP 才能正常判断网络是否可用；
+    - "msftconnecttest.com"         # Windows 连接检测域名（悠哉定义：Windows 系统检测网络是否需要登录（如酒店 WiFi）的域名，需真实 IP）Windows 系统的“网络连通性检测”域名，用真实 IP 才能正常判断网络是否可用；
+    - "+.lan"                                   # 局域网设备域名（悠哉定义：匹配所有以“.lan”结尾的局域网域名，如路由器、NAS 等，需真实 IP 访问）局域网设备（如路由器、NAS），需真实 IP 才能访问；过滤规则,排除所有以.lan局域网结尾的域名,不应用伪IP。
+    - "+.local"                              # 本地发现域名（悠哉定义：用于设备局域网自动发现（如 Bonjour 协议）的域名，需真实 IP 解析）常用于局域网中的设备自动发现，特别是在Bonjour或mDNS协议中。
+    - "+.localdomain"                     # 本地域后缀域名（悠哉定义：常见局域网设备的域名后缀，需真实 IP 解析以确保访问）通常作为本地域名的后缀，用于局域网内部的设备识别
+    - "localhost.*"                         # 本地服务域名（悠哉定义：匹配以“localhost.”开头的本地服务域名，如 QQ、企业微信本地服务，需真实 IP）本地服务域名（如 QQ 登录、企业微信本地服务），用真实 IP 避免登录/服务失效。 
+    - "+.home.arpa"                       # 家庭网络反向解析域名（悠哉定义：IETF 定义的家庭网络反向解析域名，需真实 IP 确保设备识别）用于家庭网络的反向域名解析，由IETF定义，确保家庭网络中的设备可以安全地识别。
+    - "+.in-addr.arpa"                     # IPv4 反向解析域名（悠哉定义：用于 IPv4 地址反向解析为域名的特殊域名，需真实 IP 解析）
+    - "+.ip6.arpa"                            # IPv6 反向解析域名（悠哉定义：用于 IPv6 地址反向解析为域名的特殊域名，需真实 IP 解析）
+    - "+.googleplay.cn"
+    - "+.android.com"
+    - "+.market.xiaomi.com"               # 小米应用商店相关域名：指定真实 IP 解析，保障小米设备应用下载/更新正常
+    - "localhost.ptlogin2.qq.com"             # QQ 本地登录域名（悠哉定义：QQ 客户端本地登录验证的域名，需真实 IP 避免登录失败）
+    - "localhost.sec.qq.com"                  # QQ 本地安全域名（悠哉定义：QQ 客户端本地安全验证的域名，需真实 IP 确保安全功能）
+    - "localhost.work.weixin.qq.com"          # 企业微信本地服务域名（悠哉定义：企业微信本地服务通信的域名，需真实 IP 避免功能异常）
+    - "time.*.com"                              # 商业时间同步域名（悠哉定义：匹配商业机构的时间同步服务器域名，需真实 IP 确保时间校准准确）
+    - "time.*.gov"                            # 政府时间同步域名（悠哉定义：匹配政府机构的时间同步服务器域名，需真实 IP 确保时间校准准确）时间同步服务器，需真实 IP 确保时间校准准确；
+    - "time.aliyun.com"                  # 国内时间服务器（需真实IP）
+    - "time.tencent.com"                # 国内时间服务器（需真实IP）
+    - "pool.ntp.org"                           # NTP 公共时间池域名（悠哉定义：全球公共 NTP 时间同步池域名，需真实 IP 确保时间同步）全球NTP池（保留，部分节点国内可直连） 
+
+  proxy-server-nameserver:                     # 中国境外的代理节点域名的dns解析服务器列表。作用是，专门为代理节点的本身的域名！提供解析服务！比如解析代理节点的域名（如 youzai.com ）时，会优先使用这组列表中的 DNS 服务器，避免因本地 DNS 服务器 给拦截污染导致节点域名无法解析、节点连不上的问题，是保障代理节点正常工作的核心 DNS 配置。配置格式：数组形式，填写 DNS 服务器地址（支持 DoH、DoT 等格式）
+    - https://dns.alidns.com/dns-query?timeout=1200               # 中国境内 阿里 DNS                  DoH    ipv4           加密方式DNS over HTTPS端口443，  防DNS劫持与窃听
+    - https://doh.pub/dns-query?timeout=1200                          # 中国境内 DNS pud                   DoH                      加密方式DNS over HTTPS端口443，支持HTTP/2，解析响应速度快
+    - https://doh.baidu.com/dns-query?timeout=1200               # 中国境内 百度 DoH        标准的DOH查询地址，（DNS over HTTPS，基于HTTPS的DNS协议）
+    - https://doh.114dns.com/dns-query?timeout=1200             # 中国境内 114 DoH       标准的DOH查询地址，（DNS over HTTPS，基于HTTPS的DNS协议）
+    - https://dns.google/dns-query?timeout=1200                    # 中国境外 Google DNS             DoH                      加密方式DNS over HTTPS端口443，支持TLS 1.3，协议兼容性最好IPv6支持：原生双栈 解析IPv6国际域名速度快
+    - https://cloudflare-dns.com/dns-query?timeout=1200      # 中国境外 Cloudflare DNS        DoH                      加密方式DNS over HTTPS端口443，支持TLS 1.3和HTTP/3  IPv6支持：原生双栈  可直接解析IPv6国际域名
+    - https://[2400:3200::1]/dns-query?timeout=1200              # 阿里云IPv6 DoH（加密，国内稳定）
+    - https://[2400:3200:baba::1]/dns-query?timeout=1200     # 阿里云IPv6 DoH（加密，国内稳定）
+    - https://[2400:da00::6666]/dns-query?timeout=1200        # 中国境内  百度IPv6 DNS
+    - https://[2001:4860:4860::8888]/dns?timeout=1200          # 中国境外 Google DNS
+    - https://[2606:4700:4700::1111]/dns?timeout=1200          # 中国境外 Cloudflare DNS
+    - tls://dns.alidns.com:853?timeout=1200                              # 中国境内 阿里 DNS                  Dot                        低延迟、抗劫持，适配国内移动网络,境内核心，与阿里 DoH 互补
+    - tls://dot.pub:853?timeout=1200                                         # 中国境内  DNSPod                    DoT                        支持 TLS 1.3，弱网下连接稳定性优于 DoH）境内 DoT（低延迟、抗劫持，适配中国境内移动网络）
+    - tls://8.8.8.8:853?timeout=1200                                            # 中国境外 Google                      DoT                       中国境外境外备用，协议兼容性最强，可作为 Google DoH 的 fallback）                              
+    - tls://1.1.1.1:853?timeout=1500                                            # 中国境外 Cloudflare                 DoT                      中国境外境外核心，与 Cloudflare DoH 形成协议冗余，解析国际域名更快）    
+    - 223.5.5.5?timeout=1500                                                      # 中国境内 阿里dns                      UDP DNS（境内核心保底，解析速度快，覆盖全国节点）境内保底 UDP DNS（无加密，极端弱网/加密协议失效时兜底，确保节点域名能解析）
+    - 119.29.29.29?timeout=1500                                                # 中国境内 腾讯
+    - 180.76.76.76?timeout=1500                                                # 中国境内 百度
+    - 114.114.114.114?timeout=1500                                          # 中国境内 114 dns                     UDP DNS（境内备用，兼容性最强，适合老旧网络环境）境内保底 UDP DNS（无加密，极端弱网/加密协议失效时兜底，确保节点域名能解析）
+
+
+# DoT 优先 → 安全 + 减少污染风险→ httpsDoH 备用 → HTTPS 隧道 + 加密→ UDP/TCP普通 IPv4 DNS保底最后 → 保底解析，ipv6地址保底 兼容性最高。顺序遵循 安全优先 → 加密 → 普通 TCP/IP 原则，保证解析快速、可靠、抗污染。
+# 中国境外备用dns解析服务器 配置格式，数组形式，填写 DNS 服务器地址（支持 DoH、DoT、TCP/UDP 格式）支持在DNS规则后追加 timeout 参数，缩短超时时间可提升解析失败时切换备用DNS的效率，尤其适合移动网络（信号波动大）场景。统一建议超时时间设为  1000-1500 毫秒（即1-1.5秒）
+# 用途主要是将域名解析为IP地址，以实现网络访问，同时遵循安全优先、加密优先原则，保证解析快速、可靠、抗污染
+
+  fallback:               
+  # 1DoT（Google/Cloudflare）设1000ms 1秒  避免卡顿（若设>1.5秒，会明显感知解析慢）。
+  - https://1.0.0.1/dns-query
+  - tls://dns.google
+  - tls://8.8.8.8:853?timeout=1000                              # 中国境外 Google DoT，                （悠哉定义：Google 提供的 DNS over TLS 服务，解析境外域名精准，加密传输）
+  - tls://1.1.1.1:853?timeout=1000                              # 中国境外 Cloudflare DoT，           （悠哉定义：Cloudflare 提供的 DoT 服务，全球响应快，隐私保护强）
+  - tls://1.1.1.1:5353?timeout=1000                            # 中国境外 Cloudflare DoT 备用端口（5353是官方备用，非853，易通）
+  - tls://8.8.4.4:853?timeout=1000                              # 中国境外 Google DoT 备用，        （悠哉定义：Google 备用 DoT 服务，冗余配置，提升可用性）
+  - tls://1.0.0.1:853?timeout=1000                              # 中国境外 Cloudflare DoT 备用，   （悠哉定义：Cloudflare 备用 DoT 服务，避免单点故障）
+  - tls://1.0.0.1:5353?timeout=1000                            # 中国境外 Cloudflare DoT备用端口（1.0.0.1+5353，双备份）
+  # 2DoH（Google/Cloudflare）设1200ms（1.2秒）实测推荐DoH超时不超过1.5秒
+  - https://dns.google/dns-query?timeout=1300                      # 中国境外 Google DoH              
+  - https://dns.cloudflare.com/dns-query?timeout=1200         # 中国境外 Cloudflare DoH  
+  - https://8.8.8.8/dns-query?timeout=1200                             # 中国境外 Google DoH 备用      
+  - https://8.8.4.4/dns-query?timeout=1200                             # 中国境外 Google DoH 备用
+  - https://1.1.1.1/dns-query?timeout=1200                             # 中国境外 Cloudflare DoH 备用
+  # 3UDP/TCP协议 IPv4 DNS（无加密）设1300ms（1.3秒）
+  - 8.8.8.8?timeout=1300                                      # 中国境外 Google 普通DNS，dns.google               （悠哉定义：Google 公共 DNS 的 UDP 服务，作为保底，兼容性最高）
+  - 1.1.1.1?timeout=1300                                      # 中国境外 Cloudflare 普通DNS，one.one.one.one （悠哉定义：Cloudflare 公共 DNS 的 UDP 服务，作为保底）
+  - 8.8.4.4?timeout=1300                                      # 中国境外 Google 普通DNS 备用，                         （悠哉定义：Google 备用 UDP DNS，作为保底）
+  - 1.0.0.1?timeout=1300                                      # 中国境外 Cloudflare 普通DNS 备用，                    （悠哉定义：Cloudflare 备用 UDP DNS，作为保底）
+  # UDP 协议ipv6
+  - 2001:4860:4860::8888       # 中国境外 Google IPv6 DNS
+  - 2001:4860:4860::8844       # 中国境外 Google IPv6 DNS
+  - 2606:4700:4700::1111       # 中国境外 Cloudflare的ipv6 DNS  one.one.one.one   DoY，1dot1dot1dot1.cloudflare-dns.com
+  - 2606:4700:4700::1001       # 中国境外 Cloudflare的ipv6 DNS  one.one.one.one   DoY，1dot1dot1dot1.cloudflare-dns.com
+
+
+
+# 以上内容不要动🔔🔔🔔🔔
+
+# 以下内容 可以修改 优选ip和 pyip  其它的不要动
+
+proxies:
+
+# 美国节点
+
+
+
+- name: 🇺🇸 悠哉
+  type: vless
+  server: "2606:4700::" 
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=ProxyIP.US.CMLiussss.net"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org   
+
+
+
+- name: 🇺🇸 苍井空节点🎁每天🕗八点重置🔁十万次
+  type: vless
+  server: 104.18.209.30
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=ProxyIP.US.CMLiussss.net"               # 默认写法 path: "/?ed=2560"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org       
+
+   
+# 香港节点
+
+- name: 🇭🇰 悠哉✈️TG账号@fuchenyouzaibot 
+  type: vless
+  server: 104.17.55.142
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=ProxyIP.HK.CMLiussss.net"             # 默认写法 path: "/?ed=2560"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org 
+
+
+
+- name: 🇭🇰 v4哈哈1
+  type: vless
+  server: 104.27.35.174
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=ProxyIP.HK.CMLiussss.net"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+
+- name: 🇭🇰 v4哈哈2
+  type: vless
+  server: 104.18.31.177
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=ProxyIP.HK.CMLiussss.net"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+- name: 🇭🇰 v4哈哈3
+  type: vless
+  server: 104.17.31.243
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=ProxyIP.HK.CMLiussss.net"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+- name: 🇭🇰 v4哈哈4
+  type: vless
+  server: 104.17.151.206
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=ProxyIP.HK.CMLiussss.net"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+- name: 🇭🇰 v4哈哈5
+  type: vless
+  server: 104.26.1.182
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=ProxyIP.HK.CMLiussss.net"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+     
+- name: 🇭🇰 v4哈哈6
+  type: vless
+  server: 104.18.231.17
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=ProxyIP.HK.CMLiussss.net"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+- name: 🇭🇰 v4哈哈7
+  type: vless
+  server: 104.17.112.109
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=ProxyIP.HK.CMLiussss.net"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+- name: 🇭🇰 v4哈哈8
+  type: vless
+  server: 104.17.113.88
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=ProxyIP.HK.CMLiussss.net"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+- name: 🇭🇰 v4哈哈9
+  type: vless
+  server: 104.18.233.170
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=ProxyIP.HK.CMLiussss.net"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+
+- name: 🇭🇰 v4哈哈10
+  type: vless
+  server: 104.17.152.204
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=ProxyIP.HK.CMLiussss.net"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+
+- name: 🇭🇰 v4哈哈11
+  type: vless
+  server: 104.16.242.92
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=ProxyIP.HK.CMLiussss.net"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+
+- name: 🇭🇰 v4哈哈12
+  type: vless
+  server: 104.16.149.4
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=47.76.218.163:443"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+
+
+- name: 🇭🇰 v4哈哈13
+  type: vless
+  server: 104.17.182.245
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=156.255.90.175:8443"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+
+
+
+- name: 🇭🇰 v4哈哈14
+  type: vless
+  server: 104.18.40.33
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=194.156.99.182:8443"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+
+- name: 🇭🇰 v4哈哈15
+  type: vless
+  server: 104.17.110.74
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=47.76.218.163"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+
+- name: 🇭🇰 v4哈哈16
+  type: vless
+  server: 104.18.91.183
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=47.239.8.172"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+
+- name: 🇭🇰 v4哈哈17
+  type: vless
+  server: 104.16.154.181
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=47.243.166.181"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+   
+
+- name: 🇭🇰 v4哈哈18
+  type: vless
+  server: 104.17.148.17
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=ProxyIP.HK.CMLiussss.net"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+   
+
+- name: 🇭🇰 v4哈哈19
+  type: vless
+  server: 104.16.153.53
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=ProxyIP.HK.CMLiussss.net"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+   
+
+- name: 🇭🇰 v4哈哈20
+  type: vless
+  server: 104.17.177.6
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=ProxyIP.HK.CMLiussss.net"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+   
+
+- name: 🇭🇰 v4哈哈21
+  type: vless
+  server: 104.18.84.192
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=ProxyIP.HK.CMLiussss.net"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+   
+
+
+- name: 🇭🇰 v6哈哈1
+  type: vless
+  server: 2606:4700:57:9d55:4c45:feee:4590:f357
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=ProxyIP.HK.CMLiussss.net"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+
+- name: 🇭🇰 v6哈哈2
+  type: vless
+  server: 2606:4700:8d76:2d73:10a6:65c4:d413:966b
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=ProxyIP.HK.CMLiussss.net"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+
+- name: 🇭🇰 v6哈哈3
+  type: vless
+  server: 2606:4700:8d96:8e54:c063:264f:873f:c6b9
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=ProxyIP.HK.CMLiussss.net"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+
+
+- name: 🇭🇰 v6哈哈4
+  type: vless
+  server: 2606:4700:57:6ae6:c547:6658:2764:b44f
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=ProxyIP.HK.CMLiussss.net"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+- name: 🇭🇰 v6哈哈5
+  type: vless
+  server: 2606:4700:9ae8:fb8a:75fd:629a:f59b:416f
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=ProxyIP.HK.CMLiussss.net"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+
+- name: 🇭🇰 v6哈哈6
+  type: vless
+  server: 2606:4700:57:2a4:36ac:c7d7:8a2d:a107
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=ProxyIP.HK.CMLiussss.net"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+
+- name: 🇭🇰 v6哈哈7
+  type: vless
+  server: 2606:4700:839a:39ad:35d1:5f7c:9711:cf91
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=ProxyIP.HK.CMLiussss.net"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+
+
+
+- name: 🇺🇸 v4嘿嘿1
+  type: vless
+  server: 104.17.72.164
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=ProxyIP.US.CMLiussss.net"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+- name: 🇺🇸 v4嘿嘿2
+  type: vless
+  server: 104.17.83.171
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=ProxyIP.US.CMLiussss.net"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+- name: 🇺🇸 v4嘿嘿3
+  type: vless
+  server: 104.16.71.142
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=ProxyIP.US.CMLiussss.net"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+- name: 🇺🇸 v4嘿嘿4
+  type: vless
+  server: 104.18.209.30
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=ProxyIP.US.CMLiussss.net"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+- name: 🇺🇸 v4嘿嘿5
+  type: vless
+  server: 104.17.7.212
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=ProxyIP.US.CMLiussss.net"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+     
+- name: 🇺🇸 v4嘿嘿6
+  type: vless
+  server: 104.18.210.132
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=ProxyIP.US.CMLiussss.net"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+
+
+
+- name: 🇺🇸 v4嘿嘿7
+  type: vless
+  server: 172.67.73.103
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=ProxyIP.US.CMLiussss.net"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+- name: 🇺🇸 v4嘿嘿8
+  type: vless
+  server: 172.67.159.106
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=ProxyIP.US.CMLiussss.net"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+- name: 🇺🇸 v4嘿嘿9
+  type: vless
+  server: 104.21.23.147
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=ProxyIP.US.CMLiussss.net"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+
+- name: 🇺🇸 v4嘿嘿10
+  type: vless
+  server: 162.159.44.23
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=207.246.97.82"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+- name: 🇺🇸 v4洛杉矶11
+  type: vless
+  server: 104.19.2.249
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=ProxyIP.US.CMLiussss.net"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+
+- name: 🇺🇸 v4洛杉矶12
+  type: vless
+  server: 104.20.13.60
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=ProxyIP.US.CMLiussss.net"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+- name: 🇺🇸 v4sea13
+  type: vless
+  server: 104.18.177.241
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=104.168.88.250"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+
+- name: 🇺🇸 v4sea14
+  type: vless
+  server: 172.67.160.2
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=91.149.239.62"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+
+- name: 🇺🇸 v4sea15
+  type: vless
+  server: 172.67.154.178
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=ProxyIP.US.CMLiussss.net"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+- name: 🇺🇸 v4sjc16
+  type: vless
+  server: 104.17.204.172
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=ProxyIP.US.CMLiussss.net"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+
+- name: 🇺🇸 v4sjc17
+  type: vless
+  server: 104.16.85.135
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=ProxyIP.US.CMLiussss.net"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+
+- name: 🇺🇸 v4sjc18
+  type: vless
+  server: 104.18.104.232
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=ProxyIP.US.CMLiussss.net"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+
+
+- name: 🇺🇸 v4西雅图19
+  type: vless
+  server: 162.159.42.91
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=ProxyIP.US.CMLiussss.net"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+- name: 🇺🇸 v4西雅图20
+  type: vless
+  server: 104.26.10.167
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=ProxyIP.US.CMLiussss.net"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+- name: 🇺🇸 v4西雅图21
+  type: vless
+  server: 104.26.5.242
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=ProxyIP.US.CMLiussss.net"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+- name: 🇺🇸 v4西雅图22
+  type: vless
+  server: 104.26.9.187
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=ProxyIP.US.CMLiussss.net"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+
+- name: 🇺🇸 v6sjc1
+  type: vless
+  server: 2606:4700:a9:f68c:fbca:56fb:49d9:67b4
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=ProxyIP.US.CMLiussss.net"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+
+
+- name: 🇺🇸 v6sjc2
+  type: vless
+  server: 2606:4700:50:efe0:8ed8:1a8e:a3f3:460d
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=ProxyIP.US.CMLiussss.net"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+
+- name: 🇺🇸 v6sjc3
+  type: vless
+  server: 2606:4700:4401:a62d:4449:5223:e473:28a7
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=45.32.79.55"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org      
+
+
+
+
+- name: 🇺🇸 v6洛杉矶4
+  type: vless
+  server: 2803:f800:52:650e:17dc:3749:ada2:203
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=ProxyIP.US.CMLiussss.net"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org      
+
+
+
+- name: 🇺🇸 v6洛杉矶5
+  type: vless
+  server: 2606:4700:a1:ac66:a239:60ab:8815:33e
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=ProxyIP.US.CMLiussss.net"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org      
+
+
+- name: 🇺🇸 v6西雅图6
+  type: vless
+  server: 2606:4700:3030:aefb:accb:a099:f81c:b32e 
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=ProxyIP.US.CMLiussss.net"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org      
+
+
+- name: 🇺🇸 v6西雅图7
+  type: vless
+  server: 2606:4700:2c:63ad:6edb:903e:8901:52b3
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=ProxyIP.US.CMLiussss.net"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org      
+
+
+
+- name: 🇺🇸 v6西雅图8
+  type: vless
+  server: 2606:4700:3031:68d9:8030:3c4e:a1cf:a30c
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=ProxyIP.US.CMLiussss.net"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org      
+
+
+
+- name: 🇺🇸 v6西雅图9
+  type: vless
+  server: 2606:4700:2a:316b:a055:c0bc:9997:dadc
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=ProxyIP.US.CMLiussss.net"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org      
+
+
+- name: 🇺🇸 v6sjc10
+  type: vless
+  server: 2606:4700:0:4e2c:a9c4:9fa2:e47d:419f,SJC,North
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=ProxyIP.US.CMLiussss.net"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org      
+
+
+
+
+- name: 🇯🇵 v4嘻嘻1
+  type: vless
+  server: 162.159.128.137
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=ProxyIP.JP.CMLiussss.net"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+
+- name: 🇯🇵 v4嘻嘻2
+  type: vless
+  server: 162.159.135.190
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=ProxyIP.JP.CMLiussss.net"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+
+
+- name: 🇯🇵 v4嘻嘻3
+  type: vless
+  server: 162.159.129.97
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=ProxyIP.JP.CMLiussss.net"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+
+- name: 🇯🇵 v4嘻嘻4
+  type: vless
+  server: 162.159.130.116
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=ProxyIP.JP.CMLiussss.net"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+
+- name: 🇯🇵 v4嘻嘻5
+  type: vless
+  server: 162.159.133.167
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=ProxyIP.JP.CMLiussss.net"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+
+- name: 🇯🇵 v4嘻嘻6
+  type: vless
+  server: 162.159.134.209
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=ProxyIP.JP.CMLiussss.net"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+
+- name: 🇯🇵 v4嘻嘻7
+  type: vless
+  server: 162.159.136.28
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=ProxyIP.JP.CMLiussss.net"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+
+- name: 🇯🇵 v4嘻嘻8
+  type: vless
+  server: 162.159.137.223
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=ProxyIP.JP.CMLiussss.net"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+
+- name: 🇯🇵 v4嘻嘻9
+  type: vless
+  server: 162.159.140.238
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=ProxyIP.JP.CMLiussss.net"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+
+- name: 🇯🇵 v4嘻嘻10
+  type: vless
+  server: 162.159.142.146
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=ProxyIP.JP.CMLiussss.net"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+
+- name: 🇯🇵 v4嘻嘻11
+  type: vless
+  server: 162.159.143.118
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=ProxyIP.JP.CMLiussss.net"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+
+- name: 🇯🇵 v4嘻嘻12
+  type: vless
+  server: 162.159.141.186
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=ProxyIP.JP.CMLiussss.net"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+
+- name: 🇯🇵 v4嘻嘻13
+  type: vless
+  server: 162.159.152.123
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=ProxyIP.JP.CMLiussss.net"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+- name: 🇯🇵 v4嘻嘻14
+  type: vless
+  server: 162.159.153.185
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=ProxyIP.JP.CMLiussss.net"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+
+- name: 🇯🇵 v4嘻嘻15
+  type: vless
+  server: 162.159.153.6
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=ProxyIP.JP.CMLiussss.net"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+
+- name: 🇯🇵 v4嘻嘻16
+  type: vless
+  server: 162.159.152.93
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=ProxyIP.JP.CMLiussss.net"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+
+- name: 🇯🇵 v4嘻嘻17
+  type: vless
+  server: 162.159.129.80
+  port: 2083
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=ProxyIP.JP.CMLiussss.net"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+
+- name: 🇯🇵 v4嘻嘻18
+  type: vless
+  server: 162.159.142.197
+  port: 2083
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=ProxyIP.JP.CMLiussss.net"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+- name: 🇯🇵 v4嘻嘻19
+  type: vless
+  server: 162.159.134.48
+  port: 2083
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=ProxyIP.JP.CMLiussss.net"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+- name: 🇯🇵 v4嘻嘻20
+  type: vless
+  server: www.visa.co.jp
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=ProxyIP.JP.CMLiussss.net"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+
+- name: 🇹🇼 v4台湾0
+  type: vless
+  server: 213.210.4.49
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=213.210.4.49:443"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+
+
+
+- name: 🇹🇼 v4台湾1
+  type: vless
+  server: www.visa.com.tw
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=213.210.4.49:443"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+
+- name: 🇹🇼 v4台湾2
+  type: vless
+  server: www.visa.com.tw
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=ProxyIP.TW.CMLiussss.net"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+
+- name: 🇹🇼 v4台湾3
+  type: vless
+  server: 213.210.4.49
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=ProxyIP.TW.CMLiussss.net"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+- name: 🇹🇼 v4台湾4
+  type: vless
+  server: ProxyIP.TW.CMLiussss.net
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=ProxyIP.TW.CMLiussss.net"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+
+- name: 🇸🇬 v4新加坡1
+  type: vless
+  server: www.visa.com.sg
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=ProxyIP.SG.CMLiussss.net"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+      
+- name: 🇸🇬 v4新加坡2
+  type: vless
+  server: 104.18.12.229
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=ProxyIP.SG.CMLiussss.net"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+- name: 🇸🇬 v4新加坡3
+  type: vless
+  server: 104.18.13.229
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=ProxyIP.SG.CMLiussss.net"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+- name: 🇸🇬 v4新加坡4
+  type: vless
+  server: ProxyIP.SG.CMLiussss.net
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=ProxyIP.SG.CMLiussss.net"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+
+
+- name: 🇸🇬 v4新加坡5
+  type: vless
+  server: 104.27.120.80
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=ProxyIP.SG.CMLiussss.net"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+
+- name: 🇸🇬 v6新加坡1
+  type: vless
+  server: 2606:4700:9c6f:d246:cde:5127:4305:2b37
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=ProxyIP.SG.CMLiussss.net"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+
+
+- name: 🇸🇬 v6新加坡2
+  type: vless
+  server: 2606:4700:9c6d:1f63:a79c:eb0d:2ac4:3a20
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=ProxyIP.SG.CMLiussss.net"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+
+- name: 🇸🇬 v6新加坡3
+  type: vless
+  server: 2606:4700:9c6c:c091:3982:bc93:caa6:f3b9
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=ProxyIP.SG.CMLiussss.net"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+
+
+- name: 🇸🇬 v6新加坡4
+  type: vless
+  server: 2606:4700:9a9e:25a:36d8:125a:d49d:32f4
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=ProxyIP.SG.CMLiussss.net"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+
+
+- name: 🇸🇬 v6新加坡5
+  type: vless
+  server: 2606:4700:9aec:cf73:672a:842:691c:e24e
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=ProxyIP.SG.CMLiussss.net"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+- name: 🇸🇬 v6新加坡6
+  type: vless
+  server: 2606:4700:9a98:6ecb:4f0a:9801:db53:f57e
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=ProxyIP.SG.CMLiussss.net"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+
+- name: 🇸🇬 v6新加坡7
+  type: vless
+  server: 2606:4700:83bf:c5fd:4b32:2ef0:93e2:56e9
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=ProxyIP.SG.CMLiussss.net"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+
+- name: 🇸🇬 v6新加坡8
+  type: vless
+  server: 2606:4700:8d7b:1007:15c2:7894:1ecd:715c
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=ProxyIP.SG.CMLiussss.net"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+
+- name: 🇸🇬 v6新加坡9
+  type: vless
+  server: 2606:4700:90dd:8d5:4d5d:d289:7ef8:f416
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=ProxyIP.SG.CMLiussss.net"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+
+
+- name: 🇰🇷 v4韩国1
+  type: vless
+  server: ProxyIP.KR.CMLiussss.net
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=129.154.50.159:443"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+- name: 🇰🇷 v4韩国2
+  type: vless
+  server: ProxyIP.KR.CMLiussss.net
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=ProxyIP.KR.CMLiussss.net"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+
+- name: 🇰🇷 v4韩国3
+  type: vless
+  server: 64.176.227.171
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=ProxyIP.KR.CMLiussss.net"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+- name: 🇰🇷 v4韩国4
+  type: vless
+  server: 123.111.169.70
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=ProxyIP.KR.CMLiussss.net"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+- name: 🇬🇧 v4英国0
+  type: vless
+  server: 104.16.101.164
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=ProxyIP.GB.CMLiussss.net"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+
+
+- name: 🇬🇧 v4英国1
+  type: vless
+  server: 104.18.34.177
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=103.13.208.242"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+
+- name: 🇬🇧 v4英国2
+  type: vless
+  server: 104.16.128.3
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=91.149.203.145"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+- name: 🇬🇧 v4英国3
+  type: vless
+  server: 104.16.128.3
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=84.8.145.58"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+- name: 🇬🇧 v4英国4
+  type: vless
+  server: 104.18.34.177
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=ProxyIP.GB.CMLiussss.net"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+
+- name: 🇬🇧 v4英国5
+  type: vless
+  server: 94.131.122.186
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=ProxyIP.GB.CMLiussss.net"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+- name: 🇬🇧 v4英国6
+  type: vless
+  server: ProxyIP.GB.CMLiussss.net
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=ProxyIP.GB.CMLiussss.net"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+- name: 🇬🇧 v4英国7
+  type: vless
+  server: 104.18.116.161
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=ProxyIP.GB.CMLiussss.net"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+- name: 🇬🇧 v4英国8
+  type: vless
+  server: 104.18.124.69
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=ProxyIP.GB.CMLiussss.net"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+
+
+- name: 🇫🇷 v4法国1
+  type: vless
+  server: 104.20.48.205
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=104.20.49.17"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+- name: 🇫🇷 v4法国2
+  type: vless
+  server: 104.20.55.75
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=104.20.49.17"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+
+- name: 🇫🇷 v4法国3
+  type: vless
+  server: 104.20.49.17
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=104.20.49.17"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+
+- name: 🇩🇪 v4德国1
+  type: vless
+  server: 23.251.50.237
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=ProxyIP.DE.CMLiussss.net"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+
+
+- name: 🇩🇪 v4德国2
+  type: vless
+  server: ProxyIP.DE.CMLiussss.net
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=ProxyIP.DE.CMLiussss.net"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+
+
+- name: 🇸🇪 v4瑞典1
+  type: vless
+  server: 91.186.216.240
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=ProxyIP.SE.CMLiussss.net"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+- name: 🇸🇪 v4瑞典2
+  type: vless
+  server: ProxyIP.SE.CMLiussss.net
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=ProxyIP.SE.CMLiussss.net"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+- name: 🇸🇪 v4瑞典3
+  type: vless
+  server: 20.240.242.20
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=ProxyIP.SE.CMLiussss.net"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+
+- name: 🇳🇱 v4荷兰1
+  type: vless
+  server: 94.131.11.254
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=ProxyIP.NL.CMLiussss.net"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+
+- name: 🇳🇱 v4荷兰2
+  type: vless
+  server: ProxyIP.NL.CMLiussss.net
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=ProxyIP.NL.CMLiussss.net"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+
+
+- name: 🇫🇮 v4芬兰1
+  type: vless
+  server: 31.57.61.217
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=ProxyIP.FI.CMLiussss.net"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+
+- name: 🇫🇮 v4芬兰2
+  type: vless
+  server: ProxyIP.FI.CMLiussss.net
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=ProxyIP.FI.CMLiussss.net"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+
+
+- name: 🇨🇦 v4加拿大1
+  type: vless
+  server: 209.38.12.25
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=209.38.12.25:443"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+
+- name: 🇨🇦 v4加拿大2
+  type: vless
+  server: 178.128.228.52
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=178.128.228.52:443"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+
+
+- name: 🇮🇳 v4印度1
+  type: vless
+  server: 167.179.27.92
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=167.179.27.92:443"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+
+- name: 🐥 shopify 🇭🇰
+  type: vless
+  server: www.shopify.com
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/?ed=2560"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+
+- name: 🐥 WTO 🇭🇰
+  type: vless
+  server: www.wto.org
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/?ed=2560"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+
+- name: 🐥 time.is
+  type: vless
+  server: time.is
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/?ed=2560"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+
+- name: 🐥 icook.hk
+  type: vless
+  server: icook.hk
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/?ed=2560"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+
+- name: 🐥 icook.tw
+  type: vless
+  server: icook.tw
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/?ed=2560"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+
+- name: 🐥 visa.cn
+  type: vless
+  server: www.visa.cn
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/?ed=2560"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+
+- name: 🐥 visa.com
+  type: vless
+  server: visa.com
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/?ed=2560"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+- name: 🐥 www.visa.com
+  type: vless
+  server: www.visa.com
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/?ed=2560"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+
+- name: 🐥 www.visa.com.hk
+  type: vless
+  server: www.visa.com.hk
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/?ed=2560"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+- name: 🐥 visa.com.hk
+  type: vless
+  server: visa.com.hk
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/?ed=2560"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+
+- name: 🐥 www.visa.com.tw
+  type: vless
+  server: www.visa.com.tw
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/?ed=2560"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+- name: 🐥 visa.com.tw
+  type: vless
+  server: visa.com.tw
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/?ed=2560"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+
+- name: 🐥 www.visa.co.jp
+  type: vless
+  server: www.visa.co.jp
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/?ed=2560"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+
+- name: 🐥 visa.co.jp
+  type: vless
+  server: visa.co.jp
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/?ed=2560"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+
+- name: 🐥 www.visa.com.sg
+  type: vless
+  server: www.visa.com.sg
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/?ed=2560"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+- name: 🐥 visa.com.sg
+  type: vless
+  server: visa.com.sg
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/?ed=2560"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+
+- name: 🐥 www.visa.co.uk         
+  type: vless
+  server: www.visa.co.uk
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/?ed=2560"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+- name: 🐥 www.visa.fr
+  type: vless
+  server: www.visa.fr
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/?ed=2560"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+
+
+- name: 🐥 pages
+  type: vless
+  server: pages.cloudflare.com
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/?ed=2560"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+
+- name: 🇺🇸 pages
+  type: vless
+  server: pages.cloudflare.com
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=ProxyIP.US.CMLiussss.net"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+
+- name: 🇺🇸 workers
+  type: vless
+  server: workers.cloudflare.com
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=ProxyIP.US.CMLiussss.net"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+
+- name: 🇺🇸 blog
+  type: vless
+  server: blog.cloudflare.com
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=ProxyIP.US.CMLiussss.net"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+
+- name: 🐥 developers
+  type: vless
+  server: developers.cloudflare.com
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=ProxyIP.HK.CMLiussss.net"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+- name: 🇺🇸 radar
+  type: vless
+  server: radar.cloudflare.com
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=ProxyIP.US.CMLiussss.net"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org  
+
+
+- name: 🇺🇸 one.dash
+  type: vless
+  server: one.dash.cloudflare.com
+  port: 443
+  uuid: db967633-d5e3-48d5-b159-0b7bdacf5e04
+  tcp: true
+  udp: true
+  tls: true
+  network: ws
+  servername: aiyawoqushangtoule.dpdns.org
+  ws-opts:
+    path: "/pyip=ProxyIP.US.CMLiussss.net"
+    headers:
+      Host: aiyawoqushangtoule.dpdns.org
+
+
+
+
+
+
+- name: 全球直连
+  type: direct
+  udp: true
+  tcp: true
+
+
+- name: 广告延迟30秒   # 60秒是 60000 
+  type: http
+  server: 127.0.0.1  # 本地空地址，不实际联网
+  port: 9999
+  timeout: 30000      # 关键：让这个“假节点”等待60秒后超时的时间。然后切换至下个节点。然后受到影响的就可以通了，通了后会走分流规则。
+
+
+
+# 以上🔔内容 可以修改 优选ip和 pyip  其它内容不要动！！！！
+
+
+# 以下内容 🔔🔔🔔 不要动！悠哉排除广告规则 ⚠️ 勿动！！！！
+
+
+# 悠哉✈️TG账号@fuchenyouzaibot✈️filter: "(?i)^(?!.*(您当前是试用套餐|满意请购买|🇦🇶使用|邀请返佣|TG频道|TG群组|qq号码|qq群|微信|WeChat|仅供个人使用|返利|机场|VPN|剩余流量|套餐到期|有效期|距离下次重置剩余|您已到期|流量用完|请续费使用|续费后更新订阅|备用地址|永久地址|网址|官网|加入我的频道|加入我的群组|解锁更多优选节点|TG: @|telegram|群|邀请|返利|循环|官网|客服|网站|网址|获取|订阅流量|到期|机场|下次|版本|官址|备用|过期|已用|联系|邮箱|工单|贩卖|通知|倒卖|防止|国内|地址|频道|无法|说明|提示|特别|访问|支持|教程|关注|更新|作者|加入|USE|USED|TOTAL|EXPIRE|EMAIL|Panel|Channel|Author|traffic)).*$"
+
+# 悠哉订阅锚点规则区
+# 锚点PProviders: &PProviders {type: http, interval: 18000, health-check: {enable: true, url: 'https://www.gstatic.com/generate_204', interval: 300}, filter: '^(?!.*(🇦🇶|使用|邀请返佣|TG频道|TG群组|qq号码|qq群|微信|WeChat|仅供个人使用|返利|机场|VPN|剩余流量|套餐到期|有效期|距离下次重置剩余|您已到期|流量用完|请续费使用|续费后更新订阅|备用地址|永久地址|网址|官网|加入我的频道|加入我的群组|解锁更多优选节点|TG: @|telegram|拒绝|直连|群|邀请|返利|循环|官网|客服|网站|网址|获取|订阅|流量|到期|机场|下次|版本|官址|备用|过期|已用|联系|邮箱|工单|贩卖|通知|倒卖|防止|国内|地址|频道|无法|说明|提示|特别|访问|支持|教程|关注|更新|作者|加入|USE|USED|TOTAL|EXPIRE|EMAIL|Panel|Channel|Author|traffic))'}
+
+providers: true       #  表示启用订阅提供商（Providers）功能，允许加载悠哉定义的各类Provider。订阅或文件订阅
+
+PProviders: &PProviders
+  type: http
+  interval: 18000   # 五小时更新
+  proxy: "全球直连"
+  override:
+    skip-cert-verify: true
+    udp: true
+    ip-version: ipv6-prefer         # 新增优先使用IPv6
+  health-check:
+    enable: true
+    url: 'https://www.gstatic.com/generate_204'
+    interval: 300
+  filter: '^(?!.*(超时请重新订阅|代表|分割线|网址发布|网站注册地址|注|防失联地址|您当前是试用套餐|满意请购买|🇦🇶|使用|邀请返佣|TG频道|TG群组|qq号码|qq群|微信|WeChat|仅供个人使用|返利|机场|VPN|剩余流量|节点分享|电报群|TG群@|订阅进群|流量剩余 ≫|套餐到期|127.0.0.1|有效期|https://t.me|距离下次重置剩余|sufujia|只有爱懂的人才能用|线路少请更换软件看公告|您已到期|流量用完|请续费使用|续费后更新订阅|备用地址|永久地址|网址|官网|加入我的频道|加入我的群组|LSMOO|解锁更多优选节点|TG: @|telegram|群|邀请|返利|循环|官网|客服|网站|网址|获取|订阅流量|到期|机场|下次|版本|官址|备用|过期|已用|联系|邮箱|工单|贩卖|通知|倒卖|防止|国内|地址|频道|无法|说明|提示|特别|访问|支持|教程|关注|更新|作者|加入|USE|USED|TOTAL|EXPIRE|EMAIL|Panel|Channel|Author|traffic))'
+
+
+
+  # 上个是正向匹配,另一种写法反向排除exclude-filter: "(?i)(流量|到期|重置|扣费|客服|更新|检查|fengwo)"
+  # 另类的感觉filter: 'a|b' 这样 golang regex 正则表达式  可选配置：用Golang语法的正则筛选数据（当前注释未启用，筛选包含"a"或"b"的内容）
+
+
+global-ua: clash.meta            # 用于下载订阅时指定UA
+
+
+# 以上内容 🔔 不要动。以下内容，可改地方三处。其余地方不要动！！！！
+
+# 1可修改，机场名，在 ✈️ 和 数字 中间修改。
+# 2可更换订阅链接，填写你的订阅链接。
+# 3可修改， 节点前缀  。  ✈️ 和 数字 中间修改。
+
+# 保存机场订阅文件路径 path: ./proxies/自定义名字.yaml
+
+
+
+
+proxy-providers:                       # 代理订阅源管理模块：用于批量加载、更新外部订阅链接节点
+
+
+  ✈️机场名1:
+    <<: *PProviders
+    proxy: "全球直连"
+    url: "https://2.luolicon.ru/oosaka/11fff967ea7887cade40b773e4481c46"
+    path: ./proxies/2/机场名1.yaml    
+    override:
+      additional-prefix: '[✈️Kitty1]'
+      skip-cert-verify: true
+      udp: true
+
+
+
+
+
+
+  ✈️浪潮机场专用2:
+    <<: *PProviders
+    proxy: "全球直连"
+    url: "填写你的订阅链接"
+    path: ./proxies/2/浪潮机场专用2.yaml    
+    override:
+      additional-prefix: '[✈️浪2]'
+      sni:
+        - djpf1.fr101.xyz
+        - d1sgtrf1.fr101.xyz
+      skip-cert-verify: true 
+      udp: true 
+
+
+
+
+  ✈️机场名3:
+    <<: *PProviders
+    proxy: "全球直连"
+    url: "填写你的订阅链接"
+    path: ./proxies/2/机场名3.yaml
+    override:
+      additional-prefix: '[✈️节点前缀3]'
+      skip-cert-verify: true 
+      udp: true
+
+
+
+
+
+  ✈️机场名4:
+    <<: *PProviders
+    proxy: "全球直连"
+    url: "填写你的订阅链接"
+    path: ./proxies/2/机场名4.yaml
+    override:
+      additional-prefix: '[✈️机场名4]'
+      skip-cert-verify: true
+      udp: true
+
+
+
+
+
+  ✈️机场名5:
+    <<: *PProviders
+    proxy: "全球直连"
+    url: "填写你的订阅链接"
+    path: ./proxies/2/机场名5.yaml
+    override:
+      additional-prefix: '[✈️节点前缀5]'
+      skip-cert-verify: true
+      udp: true
+
+
+
+
+  ✈️机场名6:
+    <<: *PProviders
+    proxy: "全球直连"
+    url: "填写你的订阅链接"
+    path: ./proxies/2/机场名6.yaml
+    override:
+      additional-prefix: '[✈️节点前缀6]'
+      skip-cert-verify: true                   
+      udp: true                    
+
+
+
+
+
+  ✈️机场名7:
+    <<: *PProviders
+    proxy: "全球直连"
+    url: "填写你的订阅链接"
+    path: ./proxies/2/机场名7.yaml
+    override:
+      additional-prefix: '[✈️节点前缀7]'
+      skip-cert-verify: true                   
+      udp: true            
+   
+   
+
+  ✈️机场名8:
+    <<: *PProviders
+    proxy: "全球直连"
+    url: "填写你的订阅链接"
+    path: ./proxies/2/机场名8.yaml
+    override:
+      additional-prefix: '[✈️节点前缀8]'
+      skip-cert-verify: true                   
+      udp: true            
+      
+ 
+     
+  ✈️机场名9:
+    <<: *PProviders
+    proxy: "全球直连"
+    url: "填写你的订阅链接"
+    path: ./proxies/2/机场名9.yaml
+    override:
+      additional-prefix: '[✈️节点前缀9]'
+      skip-cert-verify: true                   
+      udp: true            
+
+
+
+  ✈️机场名10:
+    <<: *PProviders
+    proxy: "全球直连"
+    url: "填写你的订阅链接"
+    path: ./proxies/2/机场名10.yaml
+    override:
+      additional-prefix: '[✈️节点前缀10]'
+      skip-cert-verify: true                   
+      udp: true            
+
+
+
+  ✈️机场名11:
+    <<: *PProviders
+    proxy: "全球直连"
+    url: "填写你的订阅链接"
+    path: ./proxies/2/机场名11.yaml
+    override:
+      additional-prefix: '[✈️节点前缀11]'
+      skip-cert-verify: true                   
+      udp: true            
+
+
+
+  ✈️机场名12:
+    <<: *PProviders
+    proxy: "全球直连"
+    url: "填写你的订阅链接"
+    path: ./proxies/2/机场名12.yaml
+    override:
+      additional-prefix: '[✈️节点前缀12]'
+      skip-cert-verify: true                   
+      udp: true            
+
+
+
+  ✈️机场名13:
+    <<: *PProviders
+    proxy: "全球直连"
+    url: "填写你的订阅链接"
+    path: ./proxies/2/机场名13.yaml
+    override:
+      additional-prefix: '[✈️节点前缀13]'
+      skip-cert-verify: true                   
+      udp: true            
+
+
+
+  ✈️机场名14:
+    <<: *PProviders
+    proxy: "全球直连"
+    url: "填写你的订阅链接"
+    path: ./proxies/2/机场名14.yaml
+    override:
+      additional-prefix: '[✈️节点前缀14]'
+      skip-cert-verify: true                   
+      udp: true            
+
+
+
+
+  ✈️机场名15:
+    <<: *PProviders
+    proxy: "全球直连"
+    url: "填写你的订阅链接"
+    path: ./proxies/2/机场名15.yaml
+    override:
+      additional-prefix: '[✈️节点前缀15]'
+      skip-cert-verify: true                   
+      udp: true            
+
+
+
+# 以下内容，🔔不需要你操作全自动的！请勿编辑，⚠️ 动一丝，也会影响正常使用！！！
+# 以下内容，🔔不需要你操作全自动的！请勿编辑，⚠️ 动一丝，也会影响正常使用！！！
+# 以下内容，🔔不需要你操作全自动的！请勿编辑，⚠️ 动一丝，也会影响正常使用！！！
+
+
+
+proxy-groups:               # 代理节点分组（悠哉定义：将多个代理节点按地区，功能，策略，等归类，实现流量的精细化路由，支持手动选择、自动测速、故障切换等多种管理模式）支持的5 种代理分组类型（url-test/fallback/load-balance/select/reject等）
+
+
+  - name: 🕹️ 手动选择节点分组
+    type: select
+    include-all: true            # 显示全部节点
+    interval: 300                 # lazy: true 按需检测（悠哉定义：true表示仅当该分组有流量时才发起延迟测试，false表示启动客户端即全量测试，true更节省网络资源）
+    url: https://www.gstatic.com/generate_204
+    icon: "https://raw.githubusercontent.com/fuchenyouzai/tg-fuchenyouzaibot/main/icon-192.png"
+    proxies:
+      - 🇺🇸 悠哉
+      - 🇺🇸 苍井空节点🎁每天🕗八点重置🔁十万次
+      - 🇭🇰 悠哉✈️TG账号@fuchenyouzaibot
+      - ⚠️ 谷歌GV专用节点分组
+      - 🇭🇰 香港自动节点分组
+      - 🇭🇰 香港分流自动节点分组
+      - 🇺🇸 美国自动节点分组
+      - 🇺🇸 美国分流自动节点分组
+      - 🎮 PUBG🇭🇰节点自动切换分组   
+      - 🎮 PUBG🇺🇸节点自动切换分组
+      - 🇹🇼 台湾自动节点分组
+      - 🇯🇵 日本自动节点分组
+      - 🇰🇷 韩国自动节点分组
+      - 🇸🇬 新加坡自动节点分组
+      - 🇲🇴 澳门自动节点分组      
+      - 🇦🇺 澳大利亚自动节点分组
+      - 🇨🇦 加拿大自动节点分组
+      - 🇫🇷 法国自动节点分组
+      - 🇬🇧 英国自动节点分组
+      - 🇩🇪 德国自动节点分组
+      - 🇳🇱 荷兰自动节点分组
+      - 🇫🇮 芬兰自动节点分组
+      - 🇵🇱 波兰自动节点分组
+      - 🇸🇪 瑞典自动节点分组
+      - 🐼 东西南北中亚洲自动节点分组
+      - 🦅 东西南北中欧洲自动节点分组      
+      - 🐵 东西南北中非洲自动节点分组
+      - 🦁 北中南美洲自动节点分组
+      - 🐨 大洋洲自动节点分组
+      - 🔃 自动切换节点分组
+      - ⚖️ 香港自动负载均衡散列节点分组
+      - ⚖️ 香港自动负载均衡轮询节点分组
+      - ⚖️ 美国自动负载均衡散列节点分组
+      - ⚖️ 美国自动负载均衡轮询节点分组
+      - 🌐 域名自动节点分组
+      - 🌧️ Cloudflare自动节点分组
+      - 🐓 中国网络自动直连节点分组
+      - DIRECT
+
+
+
+     
+  - name: ⚠️ 谷歌GV专用节点分组
+    type: url-test
+    include-all: true
+    exclude-type: direct 
+    interval: 300
+    tolerance: 50
+    url: https://www.gstatic.com/generate_204
+    filter: "(?i)(嘿嘿)"
+    exclude-filter: "(?i)(🇭🇰|🇯🇵|🇸🇬|🇰🇷)"
+    icon: "https://raw.githubusercontent.com/fuchenyouzai/tg-fuchenyouzaibot/main/con-512.png"
+
+
+
+
+
+  - name: 🇭🇰 香港自动节点分组
+    type: url-test
+    include-all: true
+    exclude-type: direct
+    interval: 300
+    tolerance: 600
+    url: https://www.gstatic.com/generate_204
+    filter: "(?i)(哈哈|港|香港|hk|🇭🇰|hongkong|hong kong)"
+    exclude-filter: "(?i)(www|visa|icook)"
+    icon: "https://raw.githubusercontent.com/fuchenyouzai/tg-fuchenyouzaibot/main/Hong_Kong.png"
+
+
+  - name: 🇭🇰 香港分流自动节点分组
+    type: url-test
+    interval: 300
+    tolerance: 600
+    url: https://www.gstatic.com/generate_204
+    icon: "https://raw.githubusercontent.com/fuchenyouzai/tg-fuchenyouzaibot/main/Hong_Kong.png"
+    proxies:
+      - 🇭🇰 v4哈哈1
+      - 🇭🇰 v4哈哈2
+      - 🇭🇰 v4哈哈3
+      - 🇭🇰 v4哈哈4
+      - 🇭🇰 v4哈哈5
+      - 🇭🇰 v4哈哈6
+      - 🇭🇰 v4哈哈7
+      - 🇭🇰 v4哈哈8
+      - 🇭🇰 v4哈哈9
+      - 🇭🇰 v4哈哈10 
+
+
+
+  - name: 🎮 PUBG🇭🇰节点自动切换分组
+    type: fallback
+    include-all: true
+    exclude-type: direct
+    interval: 300
+    tolerance: 80
+    url: https://www.gstatic.com/generate_204
+    filter: "(?i)(哈哈|香港|hk|🇭🇰|hongkong|hong kong)"
+    exclude-filter: "(?i)(www|visa|icook)"
+    icon: "https://raw.githubusercontent.com/fuchenyouzai/tg-fuchenyouzaibot/main/Hong_Kong.png"
+
+
+  - name: 🎮 PUBG🇺🇸节点自动切换分组
+    type: fallback
+    include-all: true
+    exclude-type: direct
+    interval: 300
+    tolerance: 600
+    url: https://www.gstatic.com/generate_204
+    filter: "(?i)(嘿嘿|sea|sjc|美国|United States|US|🇺🇸|america|America|洛杉矶|西雅图|圣何塞|纽约|unitedstates|united states)"
+    # exclude-filter: "(?i)()"
+    icon: "https://raw.githubusercontent.com/fuchenyouzai/tg-fuchenyouzaibot/main/United_States.png"
+
+
+
+
+
+  - name: 🇺🇸 美国自动节点分组
+    type: url-test
+    include-all: true            # 通用全量包含。明确包含所有订阅和包含所有代理节点
+  # include-all-proxies: true明确包含所有代理节点
+  # include-all-providers: true明确包含所有订阅
+    exclude-type: direct
+    interval: 300
+    tolerance: 50
+    url: https://www.gstatic.com/generate_204
+    filter: "(?i)(嘿嘿|sea|sjc|美国|United States|US|🇺🇸|america|America|洛杉矶|西雅图|圣何塞|纽约|unitedstates|united states)"
+    # exclude-filter: "(?i)()"
+    icon: "https://raw.githubusercontent.com/fuchenyouzai/tg-fuchenyouzaibot/main/United_States.png"
+
+
+
+  - name: 🇺🇸 美国分流自动节点分组
+    type: url-test
+    interval: 300
+    tolerance: 80
+    url: https://www.gstatic.com/generate_204
+    icon: "https://raw.githubusercontent.com/fuchenyouzai/tg-fuchenyouzaibot/main/United_States.png"
+    proxies:
+      - 🇺🇸 v4嘿嘿1
+      - 🇺🇸 v4嘿嘿2
+      - 🇺🇸 v4嘿嘿3
+      - 🇺🇸 v4嘿嘿4
+      - 🇺🇸 v4嘿嘿5
+      - 🇺🇸 v4嘿嘿6
+      - 🇺🇸 v4嘿嘿7
+      - 🇺🇸 v4嘿嘿8
+      - 🇺🇸 v4嘿嘿9
+      - 🇺🇸 v4嘿嘿10
+
+
+
+
+  - name: 🇹🇼 台湾自动节点分组
+    type: url-test
+    include-all: true
+    exclude-type: direct
+    interval: 300
+    tolerance: 10
+    url: https://www.gstatic.com/generate_204 
+    filter: "(?i)(🇹🇼|Taiwan|TW|台湾|taiwan)"
+    exclude-filter: "(?i)(🐥|visa|Kitty Network)"
+    icon: "https://raw.githubusercontent.com/fuchenyouzai/tg-fuchenyouzaibot/main/Taiwan.png"
+
+
+
+
+    
+  - name: 🇰🇷 韩国自动节点分组
+    type: url-test
+    include-all: true
+    exclude-type: direct
+    interval: 300
+    tolerance: 15
+    url: https://www.gstatic.com/generate_204
+    filter: "(?i)(韩|kr|South Korea|KR|韩国|korea|🇰🇷)"
+    exclude-filter: "(?i)(visa)"
+    icon: "https://raw.githubusercontent.com/fuchenyouzai/tg-fuchenyouzaibot/main/Korea.png"
+
+
+
+  - name: 🇯🇵 日本自动节点分组
+    type: url-test
+    include-all: true
+    exclude-type: direct
+    interval: 300
+    tolerance: 15
+    url: https://www.gstatic.com/generate_204
+    filter: "(?i)(日本|🇯🇵|jp|japan|东京|Tokyo)"
+    exclude-filter: "(?i)(visa)"
+    icon: "https://raw.githubusercontent.com/fuchenyouzai/tg-fuchenyouzaibot/main/Japan.png"
+
+
+
+
+
+  - name: 🇸🇬 新加坡自动节点分组
+    type: url-test
+    include-all: true
+    exclude-type: direct
+    interval: 300
+    tolerance: 20
+    url: https://www.gstatic.com/generate_204
+    filter: "(?i)(新加坡|🇸🇬|sg|狮城|xinjiapo|singapore)"
+    exclude-filter: "(?i)(visa)"
+
+
+
+
+
+  - name: 🇲🇴 澳门自动节点分组
+    type: url-test
+    include-all: true
+    exclude-type: direct    # 没有筛选出来节点会显示Selector(COMPATIBLE)选择器兼容模式 。持兼容运行，避免因环境差异导致导入配置文件失败。可以加入全球直连节点进去防止崩溃
+    interval: 300
+    tolerance: 10
+    url: https://www.gstatic.com/generate_204
+    filter: "(?i)(澳门|🇲🇴|Macao|MO)"
+    exclude-filter: "(?i)(🇭🇰)"
+
+
+
+
+  - name: 🇦🇺 澳大利亚自动节点分组
+    type: url-test
+    include-all: true
+    exclude-type: direct 
+    interval: 300
+    tolerance: 20   
+    url: https://www.gstatic.com/generate_204
+    filter: "(?i)(Australia|AU|🇦🇺|澳洲|澳大利亚)"
+    exclude-filter: "(?i)(门)"
+
+
+
+  - name: 🇨🇦 加拿大自动节点分组
+    type: url-test
+    include-all: true
+    exclude-type: direct
+    interval: 300
+    tolerance: 150
+    url: https://www.gstatic.com/generate_204
+    filter: "(?i)(Canada|CA|加拿大|🇨🇦)"
+    exclude-filter: "(?i)(America)"
+
+
+
+  - name: 🇫🇷 法国自动节点分组
+    type: url-test
+    include-all: true
+    exclude-type: direct 
+    interval: 300
+    tolerance: 180
+    url: https://www.gstatic.com/generate_204
+    filter: "(?i)(🇫🇷|France|FR|法国|fra|fr)"
+    exclude-filter: "(?i)(🐥|🇺🇸|美国|America|Germany)"
+
+
+
+
+  - name: 🇬🇧 英国自动节点分组
+    type: url-test
+    include-all: true
+    exclude-type: direct
+    interval: 300
+    tolerance: 180
+    url: https://www.gstatic.com/generate_204
+    filter: "(?i)(🇬🇧|英国|GB|UK|Britian|伦敦|英格兰|United Kingdom|yingguo|lhr|uk)"
+    exclude-filter: "(?i)(🇸🇬|visa)"
+
+
+
+
+  - name: 🇩🇪 德国自动节点分组
+    type: url-test
+    include-all: true
+    exclude-type: direct
+    interval: 300
+    tolerance: 180
+    url: https://www.gstatic.com/generate_204
+    filter: "(?i)(DE|🇩🇪|德国|Germany)"
+    exclude-filter: "(?i)(日本|🇳🇱|developers)"
+
+
+
+
+  - name: 🇳🇱 荷兰自动节点分组
+    type: url-test
+    include-all: true
+    exclude-type: direct
+    interval: 300
+    tolerance: 180
+    url: https://www.gstatic.com/generate_204
+    filter: "(?i)(🇳🇱|荷兰|NL|Netherlands)"
+    # exclude-filter: "(?i)()"
+
+
+
+
+  - name: 🇫🇮 芬兰自动节点分组
+    type: url-test
+    include-all: true
+    exclude-type: direct
+    interval: 300
+    tolerance: 180   
+    url: https://www.gstatic.com/generate_204
+    filter: "(?i)(🇫🇮|芬兰|fenlan|Finland|FI)"
+    # exclude-filter: "(?i)()"
+
+
+
+
+  - name: 🇵🇱 波兰自动节点分组
+    type: url-test
+    include-all: true
+    exclude-type: direct 
+    interval: 300
+    tolerance: 180
+    url: https://www.gstatic.com/generate_204
+    filter: "(?i)(🇵🇱|波兰)"
+    exclude-filter: "(?i)(🇺🇸|美国|香港|澳门|日本|韩国|台湾|新加坡|澳洲)"
+
+
+
+
+  - name: 🇸🇪 瑞典自动节点分组
+    type: url-test
+    include-all: true
+    exclude-type: direct 
+    interval: 300
+    tolerance: 180    
+    url: https://www.gstatic.com/generate_204
+    filter: "(?i)(🇸🇪|瑞典|Sweden|SE)"
+    exclude-filter: "(?i)(sea)"
+
+
+
+
+  - name: 🐼 东西南北中亚洲自动节点分组
+    type: url-test
+    include-all: true
+    exclude-type: direct
+    interval: 300
+    tolerance: 80
+    url: https://www.gstatic.com/generate_204
+    filter: "(?i)(🇭🇰|香港|hongkong|Hong Kong|HK|🇲🇴|澳门|Macao|MO|🇹🇼|台|台湾|taiwan|tw|Taiwan|TW|🇰🇵|朝鲜|North Korea|KP|🇯🇵|日|jp|japan|东京|日本|Japan|JP|🇰🇷|韩|korea|kr|韩国|South Korea|KR|🇸🇬|新加坡|Singapore|SG|sg|狮城|xinjiapo|🇻🇳|越南|Vietnam|VN|🇲🇾|马来西亚|Malaysia|MY|🇹🇭|泰国|Thailand|TH|🇵🇭|菲律宾|Philippines|PH|🇮🇩|印度尼西亚|Indonesia|ID|🇲🇲|缅甸|Myanmar|MM|🇰🇭|柬埔寨|Cambodia|KH|🇱🇦|老挝|Laos|LA|🇧🇳|文莱|Brunei|BN|🇹🇱|东帝汶|East Timor|TL|🇷🇺|俄|莫斯科|eluosi|俄罗斯|Russia|RU|🇲🇳|蒙|蒙古|Mongolia|MN|🇰🇿|哈萨克斯坦|Kazakhstan|KZ|🇺🇿|乌兹别克斯坦|Uzbekistan|UZ|🇹🇯|塔吉克斯坦|Tajikistan|TJ|🇰🇬|吉尔吉斯斯坦|Kyrgyzstan|KG|🇹🇲|土库曼斯坦|Turkmenistan|TM|🇹🇷|土耳其|Turkey|TR|🇦🇪|阿联酋|United Arab Emirates|AE|🇸🇦|沙特阿拉伯|Saudi Arabia|SA|🇰🇼|科威特|Kuwait|KW|🇶🇦|卡塔尔|Qatar|QA|🇱🇧|黎巴嫩|Lebanon|LB|🇮🇷|伊朗|Iran|IR|🇮🇶|伊拉克|Iraq|IQ|🇸🇾|叙利亚|Syria|SY|🇯🇴|约旦|Jordan|JO|🇵🇸|巴勒斯坦|Palestine|PS|🇮🇱|以色列|Israel|IL|🇧🇭|巴林|Bahrain|BH|🇴🇲|阿曼|Oman|OM|🇾🇪|也门|Yemen|YE|🇨🇾|塞浦路斯|Cyprus|CY|🇮🇳|印度|India|IN|🇱🇰|斯里兰卡|Sri Lanka|LK|🇵🇰|巴基斯坦|Pakistan|PK|🇧🇩|孟加拉国|Bangladesh|BD|🇳🇵|尼泊尔|Nepal|NP|🇧🇹|不丹|Bhutan|BT|🇲🇻|马尔代夫|Maldives|MV|🇦🇫|阿富汗|Afghanistan|AF)"
+    exclude-filter: "(?i)(www|visa|icook|尼日利亚|美国|visa|shopify|Kitty Network|永久地址|Britian|America|Britian|TG频道|TG账号|bot|悠哉)"
+    icon: "https://pic1.zhimg.com/v2-732607b9cf63b28c2469be7696a4f30e_b.webp"
+
+
+  - name: 🦅 东西南北中欧洲自动节点分组   
+    type: url-test
+    include-all: true
+    exclude-type: direct
+    interval: 300
+    tolerance: 200
+    url: https://www.gstatic.com/generate_204
+    filter: "(?i)(🇸🇪|瑞典|Sweden|SE|🇳🇴|挪威|Norway|NO|🇫🇮|芬兰|Finland|FI|🇩🇰|丹麦|Denmark|DK|🇮🇸|冰岛|Iceland|IS|🇫🇴|法罗群岛|FO|🇬🇱|格陵兰|Greenland|GL|🇳🇴|斯瓦尔巴群岛|Svalbard|SJ|🇬🇧|英国|United Kingdom|GB|🇫🇷|法国|France|FR|🇩🇪|德国|Germany|DE|🇧🇪|比利时|Belgium|BE|🇳🇱|荷兰|Netherlands|NL|🇱🇺|卢森堡|Luxembourg|LU|🇮🇪|爱尔兰|Ireland|IE|🇲🇨|摩纳哥|Monaco|MC|🇬🇧|马恩岛|Isle of Man|IM|🇮🇹|意大利|Italy|IT|🇪🇸|西班牙|Spain|ES|🇵🇹|葡萄牙|Portugal|PT|🇬🇷|希腊|Greece|GR|🇻🇦|梵蒂冈|Vatican City|VA|🇸🇲|圣马力诺|San Marino|SM|🇲🇹|马耳他|Malta|MT|🇦🇩|安道尔|Andorra|AD|🇬🇮|直布罗陀|Gibraltar|GI|🇲🇰|北马其顿|North Macedonia|MK|🇦🇱|阿尔巴尼亚|Albania|AL|🇲🇪|黑山|Montenegro|ME|🇷🇸|塞尔维亚|Serbia|RS|🇧🇦|波黑|BA|🇷🇺|俄罗斯|Russia|RU|🇺🇦|乌克兰|Ukraine|UA|🇵🇱|波兰|Poland|PL|🇭🇺|匈牙利|Hungary|HU|🇨🇿|捷克|CZ|🇸🇰|斯洛伐克|Slovakia|SK|🇧🇬|保加利亚|Bulgaria|BG|🇷🇴|罗马尼亚|Romania|RO|🇲🇩|摩尔多瓦|Moldova|MD|🇺🇦|克里米亚|Crimea|🇱🇻|拉脱维亚|Latvia|LV|🇱🇹|立陶宛|Lithuania|LT|🇪🇪|爱沙尼亚|Estonia|EE|🇧🇾|白俄罗斯|Belarus|BY|🇦🇹|奥地利|Austria|AT|🇨🇭|瑞士|Switzerland|CH|🇭🇷|克罗地亚|Croatia|HR|🇸🇮|斯洛文尼亚|Slovenia|SI|🇨🇿|捷克|CZ|🇸🇰|斯洛伐克|Slovakia|SK)"
+    exclude-filter: "(?i)(新西兰|伊拉克|巴基斯坦|🇹🇷|土耳其|南非|🇰🇷|🇨🇳|埃及|缅甸|巴西|乌拉圭|哈萨克斯坦|澳门|韩国|泰国|澳洲|马来西亚|菲律宾|越南|加拿大|柬埔寨|印度|印度尼西亚|尼日利亚|阿根廷|孟加拉|SG|JP|台湾|美国|日本|🇯🇵|新加坡|🇹🇼|香港|HK|US|🇺🇸|lhr|🇬🇧|🇸🇬|TG账号|TG频道|节点仅供个人使用|永久地址|官网|Kitty Network|套餐到期|距离下次重置剩余|剩余流量|japan|singapore|workers|time|radar|pages|developers|America|Taiwan|Korea|Hong Kong|🇬🇧|Netherland|Germany|America|developers|Netherland|v4sjc|sea|time|visa)"    
+
+
+
+  - name: 🐵 东西南北中非洲自动节点分组
+    type: url-test
+    include-all: true
+    exclude-type: direct
+    interval: 300
+    tolerance: 300
+    url: https://www.gstatic.com/generate_204
+    filter: "(?i)(🇪🇬|埃及|Egypt|EG|🇲🇦|摩洛哥|Morocco|MA|🇹🇳|突尼斯|Tunisia|TN|🇩🇿|阿尔及利亚|Algeria|DZ|🇱🇾|利比亚|Libya|LY|🇸🇩|苏丹|Sudan|SD|🇪🇷|厄立特里亚|Eritrea|ER|🇩🇯|吉布提|Djibouti|DJ|🇸🇴|索马里|Somalia|SO|🇲🇷|毛里塔尼亚|Mauritania|MR|西撒哈拉|EH|🇨🇩|刚果金|CD|🇨🇬|刚果布|CG|🇨🇫|中非共和国|🇸🇸|南苏丹|South Sudan|SS|🇨🇫|乍得|Chad|TD|🇬🇦|加蓬|Gabon|GA|🇨🇲|喀麦隆|Cameroon|CM|🇧🇮|布隆迪|Burundi|BI|🇰🇪|肯尼亚|Kenya|KE|🇪🇹|埃塞俄比亚|Ethiopia|ET|🇹🇿|坦桑尼亚|Tanzania|TZ|🇺🇬|乌干达|Uganda|UG|🇷🇼|卢旺达|Rwanda|RW|🇧🇮|布隆迪|Burundi|BI|🇲🇼|马拉维|Malawi|MW|🇲🇿|莫桑比克|Mozambique|MZ|🇸🇿|斯威士兰|Eswatini|SZ|🇱🇸|莱索托|Lesotho|LS|🇰🇲|科摩罗|Comoros|KM|🇲🇬|马达加斯加|Madagascar|MG|🇸🇨|塞舌尔|Seychelles|SC|留尼汪|Reunion|RE|🇳🇬|尼日利亚|Nigeria|NG|🇬🇭|加纳|Ghana|GH|🇨🇮|科特迪瓦|CI|🇬🇳|几内亚|Guinea|GN|🇸🇳|塞内加尔|Senegal|SN|🇧🇫|布基纳法索|Burkina Faso|BF|🇲🇱|马里|Mali|ML|🇳🇪|尼日尔|Niger|NE|🇨🇲|喀麦隆|Cameroon|CM|🇧🇯|贝宁|Benin|BJ|🇹🇬|多哥|Togo|TG|🇬🇳|几内亚比绍|GW|🇸🇹|圣多美和普林西比|ST|🇬🇲|冈比亚|Gambia|GM|🇨🇻|佛得角|Cape Verde|CV|🇿🇦|南非|South Africa|ZA|🇿🇼|津巴布韦|Zimbabwe|ZW|🇿🇲|赞比亚|Zambia|ZM|🇧🇼|博茨瓦纳|Botswana|BW|🇳🇦|纳米比亚|Namibia|NA|🇲🇿|莫桑比克|Mozambique|MZ|🇸🇿|斯威士兰|Eswatini|SZ|🇱🇸|莱索托|Lesotho|LS|🇲🇼|马拉维|Malawi|MW)"
+    exclude-filter: "(?i)(🇨🇳|美国|JP|Other|US|HK|🇦🇶|🇹🇼|🇭🇰|Hong Kong|one.dash|🇬🇧|TG账号|🇲🇾|马来西亚|🇻🇳|越南|新加坡|🇳🇱|🇺🇸|🇸🇬|singapore|SG|🇯🇵|🇰🇷|🇩🇪|workers|developers)"
+
+
+
+
+  - name: 🦁 北中南美洲自动节点分组
+    type: url-test
+    include-all: true
+    exclude-type: direct
+    interval: 300
+    tolerance: 180
+    url: https://www.gstatic.com/generate_204
+    filter: "(?i)(美国|United States|US|🇺🇸|america|America|洛杉矶|圣何塞|纽约|us|unitedstates|united states|US|🇨🇦|加拿大|Canada|CA|🇲🇽|墨西哥|Mexico|MX|🇺🇸|关岛|Guam|GU|🇺🇸|波多黎各|Puerto Rico|PR|🇨🇦|格陵兰|Greenland|GL|🇨🇺|古巴|Cuba|CU|🇩🇴|多米尼加共和国|Dominican Republic|DO|🇩🇲|多米尼克|Dominica|DM|🇻🇨|圣文森特和格林纳丁斯|VC|🇯🇲|牙买加|Jamaica|JM|🇧🇧|巴巴多斯|Barbados|BB|🇹🇹|特立尼达和多巴哥|TT|🇬🇩|格林纳达|Grenada|GD|🇻🇬|英属维尔京群岛|VG|🇬🇹|危地马拉|Guatemala|GT|🇨🇷|哥斯达黎加|Costa Rica|CR|🇵🇦|巴拿马|Panama|PA|🇭🇳|洪都拉斯|Honduras|HN|🇳🇮|尼加拉瓜|Nicaragua|NI|🇸🇻|萨尔瓦多|SV|🇧🇿|伯利兹|Belize|BZ|🇨🇱|智利|Chile|CL|🇧🇷|巴西|Brazil|BR|🇦🇷|阿根廷|Argentina|AR|🇨🇴|哥伦比亚|Colombia|CO|🇵🇪|秘鲁|Peru|PE|🇺🇾|乌拉圭|Uruguay|UY|🇪🇨|厄瓜多尔|Ecuador|EC|🇻🇪|委内瑞拉|Venezuela|VE|🇧🇴|玻利维亚|Bolivia|BO|🇵🇾|巴拉圭亚|Paraguay|PY|🇬🇾|圭亚那|Guyana|GY|🇸🇷|苏里南|Suriname|SR|🇫🇷|法属圭亚那|GF|🇨🇱|复活节岛|IC)"
+    exclude-filter: "(?i)(🇹🇷|🇸🇬|🇹🇼|🇩🇪|法国|🇳🇱|🇰🇷|🇫🇷|HK|AU|shopify|Hong Kong|pages|japan|developers|icook|radar|悠哉|🇬🇧|fr|visa|hoog koog)"
+
+
+
+  - name: 🐨 大洋洲自动节点分组
+    type: url-test
+    include-all: true
+    exclude-type: direct
+    interval: 300
+    tolerance: 200
+    url: https://www.gstatic.com/generate_204
+    filter: "(?i)(🇦🇺|澳大利亚|Australia|AU|🇳🇿|新西兰|New Zealand|NZ|🇵🇬|巴布亚新几内亚|PG|🇫🇯|斐济|Fiji|FJ|🇸🇧|所罗门群岛|SB|🇻🇺|瓦努阿图|Vanuatu|VU|🇹🇻|图瓦卢|Tuvalu|TV|🇰🇮|基里巴斯|Kiribati|KI|🇲🇭|马绍尔群岛|MH|🇵🇼|帕劳|Palau|PW|🇳🇺|瑙鲁|Nauru|NR|🇹🇰|汤加|Tonga|TO|🇼🇸|萨摩亚|Samoa|WS|🇨🇰|库克群岛|Cook Islands|CK|🇳🇿|纽埃|Niue|NU|🇫🇷|法属波利尼西亚|French Polynesia|PF|🇳🇿|托克劳|Tokelau|TK)"
+    exclude-filter: "(?i)(日本|🇰🇷|🇭🇰|wto|🇺🇸|🇯🇵|🇸??|🇬🇧|🇳🇱|🇰🇷🇭🇰|🇹🇼|🇩🇪|🇫🇷)"
+
+
+
+
+
+  - name: 🌐 域名自动节点分组
+    type: url-test
+    include-all: true
+    exclude-type: direct
+    interval: 300
+    tolerance: 200
+    url: https://www.gstatic.com/generate_204
+    filter: "(?i)(🐥|visa|shopify|wto|time|icook|csgo|workers|pages|blog|one.dash|radar|developers)"
+    # exclude-filter: "(?i)()"
+
+
+
+
+  - name: 🌧️ Cloudflare自动节点分组
+    type: url-test
+    include-all: true
+    exclude-type: direct
+    interval: 300
+    tolerance: 200
+    url: https://www.gstatic.com/generate_204
+    filter: "(?i)(cloudflare|CF|cf|wetest|ktff|VPS789|秋名山|OTC|xn--b6gac|freeyx|维护|优选|cfip|xyz)"
+    exclude-filter: "(?i)(新加坡)"
+
+
+
+  - name: Ⓜ️🍎📺🎵🐦💵⚙️▶️🤖🎯⛔🌈💰👛🏦📹✈️🌀🚀🎬💻
+    type: url-test
+    include-all: true
+    exclude-type: direct
+    interval: 300
+    tolerance: 200
+    url: https://www.gstatic.com/generate_204
+    filter: "(?i)(cloudflare|CF|cf|wetest|ktff|VPS789|秋名山|OTC|xn--b6gac|freeyx|维护|优选|cfip|xyz)"
+    exclude-filter: "(?i)(新加坡)"
+    
+
+  - name: 🔃 自动切换节点分组                  # 故障🔃 自动切换节点分组分组（悠哉定义：优先使用第一个节点，当节点失效时🔃 自动切换节点分组到下一个节点，适配对稳定性要求极高的场景） 🔔悠哉备注📝telegram✈️悠哉TG账号@fuchenyouzaibot✈️——✈️ 分组名称（悠哉定义：明确标识“故障切换”功能）
+    type: fallback                          # 分组类型（悠哉定义：故障切换模式，按节点列表顺序检测，仅当当前节点失效时才切换到下一个，优先保证稳定性）
+    include-all: true
+    exclude-type: direct    
+    interval: 300
+    url: https://www.gstatic.com/generate_204
+    # exclude-filter: "(?i)()"
+
+
+
+  - name: ⚖️ 香港自动负载均衡轮询节点分组   # REJECT🔔悠哉备注📝telegram✈️悠哉TG账号@fuchenyouzaibot✈️——✈️ 轮询负载均衡分组（悠哉定义：按节点列表顺序轮流分配流量，每个节点依次处理请求，适配需要分摊节点压力的场景）🔔悠哉备注📝telegram✈️悠哉TG账号@fuchenyouzaibot✈️——✈️ 分组名称（悠哉定义：明确标识“轮询分流”功能）
+    type: load-balance                           # 分组类型（悠哉定义：负载均衡模式，需配合strategy指定分流策略）
+    include-all: true
+    exclude-type: direct    
+    strategy: round-robin                    # 分流策略（悠哉定义：轮询策略，按节点列表顺序依次分配流量，每个节点处理相同数量的请求，均匀分摊压力）
+    interval: 300
+    url: https://www.gstatic.com/generate_204
+    filter: "(?i)(港|香港|HK|哈哈|🇭🇰)"  # 使用方法，多部署几个cf，然后 制作🇭🇰 香港自动节点分组，起名为哈哈1，这样排列。每个节点的uuid和域名不能重复，就是说一个🇭🇰 香港自动节点分组只能用一套不同的uuid和域名。。。必须使用不同cf部署的节点。或是其他香港服务器部署的节点。或是使用目前默认的词汇。不过，在自定义添加前，去除目前里面写的关于香港的筛选所有词汇。只留哈哈。二字。
+    exclude-filter: "(?i)(www|visa|icook)"
+
+
+
+
+  - name: ⚖️ 香港自动负载均衡散列节点分组                  # 填写不同服务器节点，或不同地区的服务器节点，或不同Cloudflare账号部署的节点。填写同一个服务器的节点毫无意义🔔悠哉备注📝telegram✈️悠哉TG账号@fuchenyouzaibot✈️——✈️ 哈希负载均衡分组（悠哉定义：根据请求特征（如目标域名）进行哈希计算，相同特征的请求固定分配给同一个节点，适配需要会话保持的场景）🔔悠哉备注📝telegram✈️悠哉TG账号@fuchenyouzaibot✈️——✈️ 分组名称（悠哉定义：明确标识“哈希分流”功能）
+    type: load-balance                   # 分组类型（悠哉定义：负载均衡模式） 
+    include-all: true
+    exclude-type: direct
+    strategy: consistent-hashing              # 分流策略（悠哉定义：一致性哈希策略，相同请求特征映射到同一个节点，保证会话稳定性）
+    interval: 300
+    url: https://www.gstatic.com/generate_204
+    filter: "(?i)(港|香港|HK|哈哈|🇭🇰)"   # 使用方法，多部署几个cf，然后 制作🇭🇰 香港自动节点分组，起名为哈哈1，这样排列。每个节点的uuid和域名不能重复，就是说一个🇭🇰 香港自动节点分组只能用一套不同的uuid和域名。。。必须使用不同cf部署的节点。或是其他香港服务器部署的节点。或是使用目前默认的词汇。不过，在自定义添加前，去除目前里面写的关于香港的筛选所有词汇。只留哈哈。二字。
+    exclude-filter: "(?i)(www|visa|icook)"
+
+
+
+  - name: ⚖️ 美国自动负载均衡轮询节点分组   # REJECT🔔悠哉备注📝telegram✈️悠哉TG账号@fuchenyouzaibot✈️——✈️ 轮询负载均衡分组（悠哉定义：按节点列表顺序轮流分配流量，每个节点依次处理请求，适配需要分摊节点压力的场景）🔔悠哉备注📝telegram✈️悠哉TG账号@fuchenyouzaibot✈️——✈️ 分组名称（悠哉定义：明确标识“轮询分流”功能）
+    type: load-balance                           # 分组类型（悠哉定义：负载均衡模式，需配合strategy指定分流策略）
+    include-all: true
+    exclude-type: direct    
+    strategy: round-robin                    # 分流策略（悠哉定义：轮询策略，按节点列表顺序依次分配流量，每个节点处理相同数量的请求，均匀分摊压力）
+    interval: 300
+    url: https://www.gstatic.com/generate_204
+    filter: "(?i)(US|嘿嘿|美国|🇺🇸)"  # 使用方法，同多部署几个cf，然后 制作美国节点，起名为嘿嘿1，这样排列。每个节点的uuid和域名不能重复，就是说一个美国节点只能用一套不同的uuid和域名。。。必须使用不同cf部署的节点。或是其他美国服务器部署的节点。或是使用目前默认的词汇。不过，在自定义添加前，去除目前里面写的关于美国的筛选所有词汇。只留嘿嘿。二字。
+   # exclude-filter: "(?i)()"
+
+
+
+
+  - name: ⚖️ 美国自动负载均衡散列节点分组                  # 填写不同服务器节点，或不同地区的服务器节点，或不同Cloudflare账号部署的节点。填写同一个服务器的节点毫无意义🔔悠哉备注📝telegram✈️悠哉TG账号@fuchenyouzaibot✈️——✈️ 哈希负载均衡分组（悠哉定义：根据请求特征（如目标域名）进行哈希计算，相同特征的请求固定分配给同一个节点，适配需要会话保持的场景）🔔悠哉备注📝telegram✈️悠哉TG账号@fuchenyouzaibot✈️——✈️ 分组名称（悠哉定义：明确标识“哈希分流”功能）
+    type: load-balance                   # 分组类型（悠哉定义：负载均衡模式） 
+    include-all: true
+    exclude-type: direct
+    strategy: consistent-hashing              # 分流策略（悠哉定义：一致性哈希策略，相同请求特征映射到同一个节点，保证会话稳定性）
+    interval: 300
+    url: https://www.gstatic.com/generate_204
+    filter: "(?i)(US|嘿嘿|美国|🇺🇸)"   # 使用方法，同多部署几个cf，然后 制作美国节点，起名为嘿嘿1，这样排列。每个节点的uuid和域名不能重复，就是说一个美国节点只能用一套不同的uuid和域名。。。必须使用不同cf部署的节点。或是其他美国服务器部署的节点。或是使用目前默认的词汇。不过，在自定义添加前，去除目前里面写的关于美国的筛选所有词汇。只留嘿嘿。二字。
+    # exclude-filter: "(?i)()"
+
+
+
+
+
+  - name: 🈲 广告自动拦截⛔⛔⛔0    # 广告拦截分组（悠哉定义：所有匹配到该分组的流量直接被拒绝，不发起任何网络请求，适配屏蔽广告的场景）🔔悠哉备注📝telegram✈️悠哉TG账号@fuchenyouzaibot✈️——✈️ 分组名称（悠哉定义：标识“拦截广告”功能）
+    type: select
+    proxies:
+      - REJECT             # 悠哉关键字：表示直接拒绝流量，不发送任何请求，实现拦截效果
+
+
+
+
+
+  - name: 🈲 广告自动拦截⛔⛔⛔1     # 广告拦截分组（悠哉定义：所有匹配到该分组的流量直接被拒绝，不发起任何网络请求，适配屏蔽广告的场景）🔔悠哉备注📝telegram✈️悠哉TG账号@fuchenyouzaibot✈️——✈️ 分组名称（悠哉定义：标识“拦截广告”功能）
+    type: fallback
+    proxies:
+      - REJECT             # 悠哉关键字：表示直接拒绝流量，不发送任何请求，实现拦截效果
+      - ⚠️ 谷歌GV专用节点分组
+      - 🇺🇸 美国自动节点分组
+      - 🇭🇰 香港自动节点分组
+      - 🕹️ 手动选择节点分组
+      - 全球直连
+      - DIRECT
+
+
+
+
+  - name: 🈲 广告自动拦截⛔⛔⛔2
+    type: fallback
+    interval: 300               # 节点定期检测间隔（5分钟，无需调整）-  interval: 3600 （1小时检测）：这是节点定期健康检测间隔，作用是每1小时自动检查“全球直连”“美国自动节点分组”等节点是否可用，提前标记失效节点，避免后续使用时才发现节点不可用。它不影响“60秒切换”的核心逻辑，仅用于提前维护节点状态。
+    timeout: 60000          # 核心参数：60秒超时（单位：毫秒），-  timeout: 60000 （60秒切换）：这是单次请求超时切换触发条件，悠哉逻辑核心——当“REJECT”拦截广告时，若60秒内请求无响应（符合广告正常等待时长），会立即自动切换到下一个节点（全球直连），和 5分钟的定期检测无关。
+    url: https://www.gstatic.com/generate_204                # 稳定的节点可用性检测地址
+    proxies:
+      - REJECT
+      - ⚠️ 谷歌GV专用节点分组
+      - 🇺🇸 美国自动节点分组
+      - 🇭🇰 香港自动节点分组
+      - 🕹️ 手动选择节点分组
+      - 全球直连
+      - DIRECT
+
+
+  - name: 🈲 广告自动拦截⛔⛔⛔3
+    type: fallback
+    interval: 300       # 5分钟定期检测节点状态
+    timeout: 60000      # 核心60秒超时后触发切换（单位：毫秒）
+    url: https://www.gstatic.com/generate_204
+    proxies:
+      - 广告延迟30秒                        # 第一步：用假的节点。“延迟拦截”替代直接REJECT，先等待30秒
+      - ⚠️ 谷歌GV专用节点分组        # 第二步：60秒超时后，自动切换到以下正常节点         
+      - 🇺🇸 美国自动节点分组
+      - 🇭🇰 香港自动节点分组
+      - 🕹️ 手动选择节点分组
+      - 全球直连
+      - DIRECT
+
+
+
+  - name: 🚫 全球自动拦截⛔⛔⛔             # 全局拦截分组（悠哉定义：用于屏蔽全局范围内的恶意/违规流量，所有匹配到的流量直接被拒绝）🔔悠哉备注📝telegram✈️悠哉TG账号@fuchenyouzaibot✈️——✈️ 分组名称（悠哉定义：标识“全局屏蔽”功能）
+    type: select
+    proxies:
+      - REJECT                          # 悠哉关键字：拒绝流量，实现全局屏蔽
+
+
+
+  - name: ❤️ 应用自动净化 ❤️                 # 应用净化分组（悠哉定义：用于屏蔽特定应用的广告/垃圾流量，适配定向净化应用的场景）分组名称（悠哉定义：标识“定向净化应用”功能）
+    type: select
+    proxies:
+      - REJECT                             # 关键字：拒绝应用的广告/垃圾流量    
+
+
+
+  - name: 🐓 中国网络自动直连节点分组
+    type: url-test
+    interval: 300
+    tolerance:  3
+    url: https://www.gstatic.com/generate_204
+    proxies:     
+      - 全球直连
+      - DIRECT
+
+
+
+# 兜底分组（悠哉定义：作为流量“兜底”，所有未匹配到其他分组的流量默认走此分组，实际指向“🕹️ 手动选择节点分组”分组，统一兜底逻辑）🔔悠哉备注📝telegram✈️悠哉TG账号@fuchenyouzaibot✈️——✈️ 分组名称（悠哉定义：标识“兜底流量”用途）
+
+
+
+  - name: 🐟 漏网之鱼
+    type: fallback         # 核心类型，实现故障自动切换
+    interval: 300
+    url: https://www.gstatic.com/generate_204
+    icon: "https://gh-proxy.com/https://raw.githubusercontent.com/fuchenyouzai/tg-fuchenyouzaibot/main/漏网之鱼.gif"
+    proxies:
+      - 🕹️ 手动选择节点分组        # 未分配分流规则的访问目标，自动选择走，- 🕹️ 手动选择节点分组，中当前选择的节点
+      - ⚠️ 谷歌GV专用节点分组     #  风险保障  上个节点失效时，自动切换备用代理节点1
+      - 🇺🇸 美国自动节点分组       #  风险保障  上个节点失效时，自动切换备用代理节点2
+      - 🇭🇰 香港自动节点分组             #    香港节点 兜底  上个节点失效时，自动切换备用代理节点3
+      - 全球直连     # 最后 兜底  上个节点失效时，网络 直连  不通过代理
+      - DIRECT       # 最后 兜底  上个节点失效时，未识别到 全球直连 节点时，走客户端内置 DIRECT 节点，  网络 直连  不通过代理
+
+
+
+
+rules:
+  - PROCESS-NAME,com.tencent.ig,🎮 PUBG🇭🇰节点自动切换分组
+
+  - DOMAIN-SUFFIX,ip.cn,🕹️ 手动选择节点分组
+  - DOMAIN-SUFFIX,whoer.net,🕹️ 手动选择节点分组
+  - DOMAIN-SUFFIX,whoer.com,🕹️ 手动选择节点分组
+  - DOMAIN-SUFFIX,ipcheck.ing,🕹️ 手动选择节点分组
+  - DOMAIN-SUFFIX,dns.whoer.cc,🕹️ 手动选择节点分组
+  - DOMAIN-KEYWORD,whoer.net,🕹️ 手动选择节点分组
+  - DOMAIN-KEYWORD,whoer.com,🕹️ 手动选择节点分组
+  - DOMAIN-KEYWORD,ipcheck.ing,🕹️ 手动选择节点分组
+
+  - IP-CIDR,0.0.0.0/8,🐓 中国网络自动直连节点分组,no-resolve
+  - IP-CIDR,10.0.0.0/8,🐓 中国网络自动直连节点分组,no-resolve
+  - IP-CIDR,100.64.0.0/10,🐓 中国网络自动直连节点分组,no-resolve
+  - IP-CIDR,127.0.0.0/8,🐓 中国网络自动直连节点分组,no-resolve
+  - IP-CIDR,172.16.0.0/12,🐓 中国网络自动直连节点分组,no-resolve
+  - IP-CIDR,192.168.0.0/16,🐓 中国网络自动直连节点分组,no-resolve
+  - IP-CIDR,198.18.0.0/16,🐓 中国网络自动直连节点分组,no-resolve
+  - IP-CIDR,224.0.0.0/4,🐓 中国网络自动直连节点分组,no-resolve
+
+  - IP-CIDR6,::1/128,🐓 中国网络自动直连节点分组,no-resolve
+  - IP-CIDR6,fc00::/7,🐓 中国网络自动直连节点分组,no-resolve
+  - IP-CIDR6,fd00::/8,🐓 中国网络自动直连节点分组,no-resolve
+  - IP-CIDR6,fe80::/10,🐓 中国网络自动直连节点分组,no-resolve
+
+  - DOMAIN-SUFFIX,acl4.ss,🐓 中国网络自动直连节点分组
+  - DOMAIN-SUFFIX,ip6-localhos,🐓 中国网络自动直连节点分组
+  - DOMAIN-SUFFIX,ip6-loopbac,🐓 中国网络自动直连节点分组
+  - DOMAIN-SUFFIX,lan,🐓 中国网络自动直连节点分组
+  - DOMAIN-SUFFIX,loca,🐓 中国网络自动直连节点分组
+  - DOMAIN-SUFFIX,localhos,🐓 中国网络自动直连节点分组
+  - DOMAIN-SUFFIX,home.arpa,🐓 中国网络自动直连节点分组
+
+  - PROCESS-NAME,com.huawei.smarthom,🐓 中国网络自动直连节点分组
+  - PROCESS-NAME,com.cmri.universalap,🐓 中国网络自动直连节点分组
+  - DOMAIN-SUFFIX,hiwifi.co,🐓 中国网络自动直连节点分组
+  - DOMAIN-SUFFIX,leike.cc,🐓 中国网络自动直连节点分组
+  - DOMAIN-SUFFIX,miwifi.com,🐓 中国网络自动直连节点分组
+  - DOMAIN-SUFFIX,my.route,🐓 中国网络自动直连节点分组
+  - DOMAIN-SUFFIX,p.to,🐓 中国网络自动直连节点分组
+  - DOMAIN-SUFFIX,peiluyou.com,🐓 中国网络自动直连节点分组  
+  - DOMAIN-SUFFIX,phicomm.me,🐓 中国网络自动直连节点分组
+  - DOMAIN-SUFFIX,router.ctc,🐓 中国网络自动直连节点分组  
+  - DOMAIN-SUFFIX,routerlogin.com,🐓 中国网络自动直连节点分组
+  - DOMAIN-SUFFIX,tendawifi.com,🐓 中国网络自动直连节点分组
+  - DOMAIN-SUFFIX,zte.hom,🐓 中国网络自动直连节点分组
+  - DOMAIN-SUFFIX,tplogin.cn,🐓 中国网络自动直连节点分组
+  - DOMAIN-SUFFIX,wifi.cmcc,🐓 中国网络自动直连节点分组
+
+  - IP-CIDR,223.5.5.5/32,🐓 中国网络自动直连节点分组,no-resolve
+  - IP-CIDR,119.29.29.29/32,🐓 中国网络自动直连节点分组,no-resolve
+  - IP-CIDR,180.76.76.76/32,🐓 中国网络自动直连节点分组,no-resolve
+  - IP-CIDR,114.114.114.114/32,🐓 中国网络自动直连节点分组,no-resolve
+  - IP-CIDR,211.140.197.58/32,🐓 中国网络自动直连节点分组,no-resolve
+  - IP-CIDR,211.137.32.178/32,🐓 中国网络自动直连节点分组,no-resolve
+
+  - IP-CIDR6,2400:3200::1/128,🐓 中国网络自动直连节点分组,no-resolve
+  - IP-CIDR6,2400:3200:baba::1/128,🐓 中国网络自动直连节点分组,no-resolve
+  - IP-CIDR6,2400:da00::6666/128,🐓 中国网络自动直连节点分组,no-resolve
+  - IP-CIDR6,2409:8014:2000::1/128,🐓 中国网络自动直连节点分组,no-resolve
+  - IP-CIDR6,2409:8014:2000::2/128,🐓 中国网络自动直连节点分组,no-resolve
+
+  - IP-CIDR,1.1.1.1/32,🇭🇰 香港分流自动节点分组,no-resolve
+  - IP-CIDR,1.0.0.1/32,🇭🇰 香港分流自动节点分组,no-resolve
+  - IP-CIDR,8.8.8.8/32,🇭🇰 香港分流自动节点分组,no-resolve
+  - IP-CIDR,8.8.4.4/32,🇭🇰 香港分流自动节点分组,no-resolve
+  - IP-CIDR6,2001:4860:4860::8888/128,🇭🇰 香港分流自动节点分组,no-resolve
+  - IP-CIDR6,2001:4860:4860::8844/128,🇭🇰 香港分流自动节点分组,no-resolve
+  - IP-CIDR6,2606:4700:4700::1111/128,🇭🇰 香港分流自动节点分组,no-resolve
+  - IP-CIDR6,2606:4700:4700::1001/128,🇭🇰 香港分流自动节点分组,no-resolve
+
+  - DOMAIN,dns.alidns.com/dns-query,🐓 中国网络自动直连节点分组
+  - DOMAIN-SUFFIX,dns.alidns.com,🐓 中国网络自动直连节点分组
+  - DOMAIN,doh.pub/dns-query,🐓 中国网络自动直连节点分组
+  - DOMAIN,doh.baidu.com/dns-query,🐓 中国网络自动直连节点分组
+  - DOMAIN,223.5.5.5/dns-query,🐓 中国网络自动直连节点分组
+  - DOMAIN,[2400:3200::1]/dns-query,🐓 中国网络自动直连节点分组
+  - DOMAIN,[2400:3200:baba::1]/dns-query,🐓 中国网络自动直连节点分组
+  - DOMAIN,[2409:8014:2000::1]/dns-query,🐓 中国网络自动直连节点分组
+  - DOMAIN,[2409:8014:2000::2]/dns-query,🐓 中国网络自动直连节点分组
+  - DOMAIN,[2400:da00::6666]/dns-query ,🐓 中国网络自动直连节点分组
+
+  - DOMAIN,dns.cloudflare.com/dns-query,🇭🇰 香港分流自动节点分组
+  - DOMAIN,dns.google/dns-query,🇭🇰 香港分流自动节点分组
+  - DOMAIN,8.8.8.8/dns-query,🇭🇰 香港分流自动节点分组
+  - DOMAIN,1.1.1.1/dns-query,🇭🇰 香港分流自动节点分组
+  - DOMAIN,8.8.4.4/dns-query,🇭🇰 香港分流自动节点分组
+  
+ 
+
+  # 1. vivo核心IP段
+  - IP-CIDR,113.108.0.0/16,🐓 中国网络自动直连节点分组,no-resolve           # vivo华南节点（广东机房）
+  - IP-CIDR,183.232.0.0/16,🐓 中国网络自动直连节点分组,no-resolve          # vivo华东节点（上海机房）
+  - IP-CIDR,220.173.0.0/16,🐓 中国网络自动直连节点分组,no-resolve             # vivo华中节点（湖南机房）
+  - IP-CIDR,58.20.0.0/16,🐓 中国网络自动直连节点分组,no-resolve                # vivo合作机房（云存储节点）
+  - IP-CIDR,183.230.0.0/16,🐓 中国网络自动直连节点分组,no-resolve              # vivo备用节点（数据同步备份）
+  - IP-CIDR,113.108.247.0/24,🐓 中国网络自动直连节点分组,no-resolve          # vivo PC端云服务节点（上海机房）
+
+  # 2. iQOO专属IP段
+  - IP-CIDR,120.232.0.0/16,🐓 中国网络自动直连节点分组,no-resolve             # iQOO游戏服务器节点（广东机房，游戏更新/对战低延迟）
+  - IP-CIDR,183.239.0.0/16,🐓 中国网络自动直连节点分组,no-resolve            # iQOO云服务备用节点（浙江机房，云同步备份）
+  - IP-CIDR,113.106.0.0/16,🐓 中国网络自动直连节点分组,no-resolve           # iQOO系统更新节点（广东机房，OriginOS升级包下载）
+  - IP-CIDR,183.57.0.0/16,🐓 中国网络自动直连节点分组,no-resolve           # iQOO游戏中心资源节点（湖南机房，游戏礼包/插件加载）
+  - IP-CIDR,27.17.0.0/16,🐓 中国网络自动直连节点分组,no-resolve              # iQOO账号安全节点（江苏机房，账号登录验证/风控）
+  - IP-CIDR,123.151.0.0/16,🐓 中国网络自动直连节点分组,no-resolve             # iQOO社区与客服节点（北京机房，社区发帖/在线客服）
+  
+  # 豆包服务器IP段
+  - IP-CIDR,101.226.0.0/16,🐓 中国网络自动直连节点分组,no-resolve                            # 豆包常用服务器IP段1（百度/字节系）
+  - IP-CIDR,123.125.0.0/16,🐓 中国网络自动直连节点分组,no-resolve                              # 豆包常用服务器IP段2（百度系）
+  - IP-CIDR,180.101.0.0/16,🐓 中国网络自动直连节点分组,no-resolve                               # 豆包备用服务器IP段（覆盖更多节点）
+  - IP-CIDR,220.181.0.0/16,🐓 中国网络自动直连节点分组,no-resolve                                   # 豆包备用服务器IP段（北方节点）
+
+
+# 境内服务器IP段直接匹配出境易境内服务器IP，避免域名解析异常导致功能失效
+  - IP-CIDR,103.235.76.0/22,🐓 中国网络自动直连节点分组,no-resolve                           # 出境易上海境内服务器IP段（负责华东地区用户请求）
+  - IP-CIDR,120.241.16.0/20,🐓 中国网络自动直连节点分组,no-resolve                            # 出境易北京境内服务器IP段（主数据中心，存储用户核心信息）
+  - IP-CIDR,183.131.72.0/21,🐓 中国网络自动直连节点分组,no-resolve                             # 出境易杭州境内服务器IP段（备用数据中心，分担流量压力）
+
+
+
+
+# 1. 云服务与账号类（数据同步、登录验证）
+  - DOMAIN-SUFFIX,vivo.com,🐓 中国网络自动直连节点分组                                   # vivo主域名（云服务入口、账号验证）
+  - DOMAIN-SUFFIX,vivo.com.cn,🐓 中国网络自动直连节点分组                                 # vivo国内主域名（云同步核心接口）
+  - DOMAIN-SUFFIX,vivocloud.com,🐓 中国网络自动直连节点分组                                  # vivo云服务专属域名（数据同步、存储）
+  - DOMAIN-SUFFIX,vivoidc.com,🐓 中国网络自动直连节点分组                                     # vivo IDC数据中心（云服务服务器节点）
+  - DOMAIN-SUFFIX,vivocloudapi.com,🐓 中国网络自动直连节点分组                               # vivo云服务API域名（同步指令、状态查询）
+  - DOMAIN-SUFFIX,findphone.vivo.com,🐓 中国网络自动直连节点分组                           # vivo/iQOO查找手机专属域名
+  - DOMAIN-SUFFIX,iqoo.com,🐓 中国网络自动直连节点分组                                      # iQOO主域名（账号、社区、服务）
+  - DOMAIN-SUFFIX,iqoo.com.cn,🐓 中国网络自动直连节点分组                                   # iQOO国内主域名（云服务、系统接
+
+
+
+# 2. CDN与资源类（静态资源、大文件加速）
+  - DOMAIN-SUFFIX,vivocdn.com,🐓 中国网络自动直连节点分组                                     # vivo官方CDN（图标、样式、安装包）
+  - DOMAIN-SUFFIX,vivocdn.cn,🐓 中国网络自动直连节点分组                                      # vivo国内CDN（大文件同步加速）
+  - DOMAIN-SUFFIX,alivovo.com,🐓 中国网络自动直连节点分组                                     # vivo与阿里合作CDN（云资源分发）
+  - DOMAIN-SUFFIX,iqoocdn.com,🐓 中国网络自动直连节点分组                                     # iQOO专属CDN（游戏资源、系统更新）
+# 3. 系统功能类（应用商店、音乐、互传等）
+  - DOMAIN-SUFFIX,vivomarket.com,🐓 中国网络自动直连节点分组                                  # vivo/iQOO应用商店域名
+  - DOMAIN-SUFFIX,vivoame.com,🐓 中国网络自动直连节点分组                                     # vivo/iQOO音乐服务域名（i音乐）
+  - DOMAIN-SUFFIX,vivofiletransfer.com,🐓 中国网络自动直连节点分组                            # vivo/iQOO互传功能域名
+  - DOMAIN-SUFFIX,iqoogame.com,🐓 中国网络自动直连节点分组                                    # iQOO游戏中心专属域名（游戏更新、福利）
+  - DOMAIN-SUFFIX,pc.vivocloud.com,🐓 中国网络自动直连节点分组                                # PC端vivo云服务专属域名（登录、文件传输）
+  - DOMAIN-SUFFIX,suite.vivo.com,🐓 中国网络自动直连节点分组                                  # vivo手机助手PC端域名（驱动、数据管理）
+  - DOMAIN-SUFFIX,suite.iqoo.com,🐓 中国网络自动直连节点分组                                  # iQOO手机助手PC端域名（驱动、数据管理）
+# 4. 兜底匹配类（避免域名遗漏）
+  - DOMAIN-KEYWORD,vivoCloud,🐓 中国网络自动直连节点分组                                      # 兜底匹配vivo云服务相关请求
+  - DOMAIN-KEYWORD,iQOOCloud,🐓 中国网络自动直连节点分组                                      # 兜底匹配iQOO云服务相关请求
+  - DOMAIN-KEYWORD,云服务,🐓 中国网络自动直连节点分组                                         # 中文关键词兜底（覆盖云服务相关链接）
+  - DOMAIN-KEYWORD,vivo,🐓 中国网络自动直连节点分组                                           # 兜底匹配vivo全品类相关域名
+  - DOMAIN-KEYWORD,iqoo,🐓 中国网络自动直连节点分组                                           # 兜底匹配iQOO全品类相关域名
+
+
+# 1. 手机端 - vivo专属进程
+  - PROCESS-NAME,com.vivo.vivocloud,🐓 中国网络自动直连节点分组                               # vivo云服务核心APP进程
+  - PROCESS-NAME,com.vivo.account,🐓 中国网络自动直连节点分组                                 # vivo账号进程（云服务登录依赖）
+  - PROCESS-NAME,com.vivo.findphone,🐓 中国网络自动直连节点分组                               # vivo查找手机进程
+  - PROCESS-NAME,com.vivo.backup,🐓 中国网络自动直连节点分组                                  # vivo云备份进程
+  - PROCESS-NAME,com.bbk.cloud,🐓 中国网络自动直连节点分组                                    # vivo云服务历史进程（老机型）
+  - PROCESS-NAME,com.vivo.cloud,🐓 中国网络自动直连节点分组                                   # vivo云服务后台进程（新机型）
+  - PROCESS-NAME,com.vivo.cloudservice,🐓 中国网络自动直连节点分组                            # vivo云服务后台同步进程
+  - PROCESS-NAME,com.vivo.disk,🐓 中国网络自动直连节点分组                                    # vivo云盘进程
+  - PROCESS-NAME,com.vivo.cloud.disk,🐓 中国网络自动直连节点分组                              # vivo云盘后台进程
+  - PROCESS-NAME,com.bbk.appstore,🐓 中国网络自动直连节点分组                                 # vivo应用商店进程
+  - PROCESS-NAME,com.android.bbkmusic,🐓 中国网络自动直连节点分组                             # vivo i音乐进程
+  - PROCESS-NAME,com.vivo.easyshare,🐓 中国网络自动直连节点分组                               # vivo互传进程
+  - PROCESS-NAME,com.vivo.pushservice,🐓 中国网络自动直连节点分组                             # vivo推送引擎（系统通知）
+  - PROCESS-NAME,com.vivo.wallet,🐓 中国网络自动直连节点分组                                  # vivo钱包进程（支付、门禁卡）
+  - PROCESS-NAME,com.vivo.game,🐓 中国网络自动直连节点分组                                    # vivo游戏中心进程
+  - PROCESS-NAME,com.vivo.agent,🐓 中国网络自动直连节点分组                                   # vivo Jovi语音进程
+  - PROCESS-NAME,com.vivo.assistant,🐓 中国网络自动直连节点分组                               # vivo智能助手进程
+  - PROCESS-NAME,com.vivo.gallery,🐓 中国网络自动直连节点分组                                 # vivo相册进程（云相册同步）
+  - PROCESS-NAME,com.android.filemanager,🐓 中国网络自动直连节点分组                           # vivo文件管理进程（云盘访问）
+  - PROCESS-NAME,com.bbk.updater,🐓 中国网络自动直连节点分组                                  # vivo系统升级进程（OTA更新）
+  - PROCESS-NAME,com.vivo.email,🐓 中国网络自动直连节点分组                                   # vivo电子邮件进程（账号同步）
+  - PROCESS-NAME,com.vivo.calendar,🐓 中国网络自动直连节点分组                                # vivo日历进程（日程同步）
+  - PROCESS-NAME,com.vivo.notes,🐓 中国网络自动直连节点分组                                   # vivo便签进程（便签同步）
+  - PROCESS-NAME,com.bbk.account,🐓 中国网络自动直连节点分组                                  # vivo账号历史进程（老机型）
+  - PROCESS-NAME,com.bbk.launcher2,🐓 中国网络自动直连节点分组                                # vivo桌面进程
+  - PROCESS-NAME,com.vivo.browser,🐓 中国网络自动直连节点分组                                 # vivo浏览器进程
+  - PROCESS-NAME,com.vivo.space,🐓 中国网络自动直连节点分组                                   # vivo官网进程
+  - PROCESS-NAME,com.vivo.hybrid,🐓 中国网络自动直连节点分组                                  # vivo快应用进程
+  - PROCESS-NAME,com.vivo.abe,🐓 中国网络自动直连节点分组                                     # vivo智慧引擎进程
+  - PROCESS-NAME,com.vivo.hiboard,🐓 中国网络自动直连节点分组                                 # vivo智慧桌面进程
+  - PROCESS-NAME,com.vivo.appfilter,🐓 中国网络自动直连节点分组                               # vivo管家服务插件
+  - PROCESS-NAME,com.vivo.numbermark,🐓 中国网络自动直连节点分组                              # vivo陌生来电识别
+  - PROCESS-NAME,com.vivo.faceunlock,🐓 中国网络自动直连节点分组                              # vivo面部识别进程
+  - PROCESS-NAME,com.vivo.aitranslate,🐓 中国网络自动直连节点分组                             # vivo语音翻译进程
+  - PROCESS-NAME,com.vivo.weather,🐓 中国网络自动直连节点分组                                 # vivo天气进程
+  - PROCESS-NAME,com.vivo.weather.provider,🐓 中国网络自动直连节点分组                           # vivo天气存储进程
+  - PROCESS-NAME,com.vivo.sim.contacts,🐓 中国网络自动直连节点分组                             # vivo SIM卡联系人服务
+  - PROCESS-NAME,com.android.bbksoundrecorder,🐓 中国网络自动直连节点分组                           # vivo录音机进程
+  - PROCESS-NAME,com.vivo.scanner,🐓 中国网络自动直连节点分组                                 # vivo扫一扫进程
+  - PROCESS-NAME,com.vivo.videoeditor,🐓 中国网络自动直连节点分组                             # vivo照片电影进程
+  - PROCESS-NAME,com.vivo.upnpserver,🐓 中国网络自动直连节点分组                              # vivo智慧投屏进程
+  - PROCESS-NAME,com.vivo.magazine,🐓 中国网络自动直连节点分组                                # vivo阅图锁屏服务
+  - PROCESS-NAME,com.vivo.video.floating,🐓 中国网络自动直连节点分组                           # vivo视频通话美颜
+  - PROCESS-NAME,com.vivo.safecente,🐓 中国网络自动直连节点分组                               # vivo安全中心进程
+  - PROCESS-NAME,com.vivo.doubleinstance,🐓 中国网络自动直连节点分组                           # vivo应用分身进程
+  - PROCESS-NAME,com.vivo.vivokaraoke,🐓 中国网络自动直连节点分组                             # vivo移动KTV进程
+  - PROCESS-NAME,com.vivo.favorite,🐓 中国网络自动直连节点分组                                # vivo收藏进程
+  - PROCESS-NAME,com.android.bbklog,🐓 中国网络自动直连节点分组                               # vivo Log信息采集进程
+  - PROCESS-NAME,com.yozo.vivo.officevivo,🐓 中国网络自动直连节点分组                           # vivo文档阅读器进程
+  - PROCESS-NAME,com.vivo.globalsearch,🐓 中国网络自动直连节点分组                            # vivo全局搜索进程
+  - PROCESS-NAME,com.vlife.vivo.wallpaper,🐓 中国网络自动直连节点分组                           # vivo动态锁屏服务
+  - PROCESS-NAME,com.sohu.inputmethod.sogou.vivo,🐓 中国网络自动直连节点分组                           # vivo搜狗输入法定制版
+  - PROCESS-NAME,com.vivo.widget.calendar,🐓 中国网络自动直连节点分组                           # vivo日历挂件进程
+  - PROCESS-NAME,com.vivo.smartshot,🐓 中国网络自动直连节点分组                               # vivo超级截屏进程
+  - PROCESS-NAME,com.vivo.aiengine,🐓 中国网络自动直连节点分组                                # vivo AI服务引擎进程
+  - PROCESS-NAME,com.vivo.contentcatcher,🐓 中国网络自动直连节点分组                           # vivo全局内容识别进程
+  - PROCESS-NAME,com.yuchuang.xycapkshare,🐓 中国网络自动直连节点分组                           # vivo APK提取与分享进程
+  - PROCESS-NAME,com.vivo.sdkplugin,🐓 中国网络自动直连节点分组                               # vivo服务安全插件进程
+  - PROCESS-NAME,com.vivo.vtouch,🐓 中国网络自动直连节点分组                                  # vivo智慧视觉进程
+  - PROCESS-NAME,com.mobile.iroaming,🐓 中国网络自动直连节点分组                              # vivo流量商店进程
+  - PROCESS-NAME,com.vivo.gamewatch,🐓 中国网络自动直连节点分组                               # vivo游戏监控进程
+  - PROCESS-NAME,com.vivo.daemonService,🐓 中国网络自动直连节点分组                           # vivo后台服务进程
+  - PROCESS-NAME,com.vivo.vms,🐓 中国网络自动直连节点分组                                     # vivo移动服务
+
+
+
+# 2. 手机端 - iQOO专属进程
+  - PROCESS-NAME,com.iqoo.vivocloud,🐓 中国网络自动直连节点分组                               # iQOO云服务核心进程（部分机型）
+  - PROCESS-NAME,com.iqoo.account,🐓 中国网络自动直连节点分组                                 # iQOO账号进程（独立账号机型）
+  - PROCESS-NAME,com.iqoo.findphone,🐓 中国网络自动直连节点分组                               # iQOO查找手机进程
+  - PROCESS-NAME,com.iqoo.secure,🐓 中国网络自动直连节点分组                                  # iQOO管家进程（系统安全）
+  - PROCESS-NAME,com.iqoo.game,🐓 中国网络自动直连节点分组                                    # iQOO游戏中心进程
+  - PROCESS-NAME,com.iqoo.gamewatch,🐓 中国网络自动直连节点分组                               # iQOO游戏监控进程（性能调节）
+  - PROCESS-NAME,com.iqoo.ui,🐓 中国网络自动直连节点分组                                      # iQOO桌面进程（OriginOS专属）
+  - PROCESS-NAME,com.iqoo.neo.game,🐓 中国网络自动直连节点分组                                # iQOO Neo系列游戏优化进程
+# 3. 手机端 - 通用系统进程（vivo/iQOO共需）
+  - PROCESS-NAME,org.codeaurora.bluetooth,🐓 中国网络自动直连节点分组                           # 蓝牙核心进程
+  - PROCESS-NAME,org.codeaurora.btmultisim,🐓 中国网络自动直连节点分组                           # 蓝牙多SIM卡适配进程
+  - PROCESS-NAME,org.codeaurora.ims,🐓 中国网络自动直连节点分组                                # VoLTE网络通信进程
+  - PROCESS-NAME,com.ibimuyu.lockscreen,🐓 中国网络自动直连节点分组                            # 通用锁屏服务进程
+  - PROCESS-NAME,com.sohu.inputmethod.sogou,🐓 中国网络自动直连节点分组                           # 搜狗输入法通用进程
+  - PROCESS-NAME,com.quark.browser,🐓 中国网络自动直连节点分组                                 # 夸克浏览器进程
+  - PROCESS-NAME,com.ucmobile.lite,🐓 中国网络自动直连节点分组                                 # UC浏览器进程
+  - PROCESS-NAME,com.unionpay,🐓 中国网络自动直连节点分组                                      # 云闪付进程
+  - PROCESS-NAME,com.unionpay.tsmservice,🐓 中国网络自动直连节点分组                           # 银联可信服务组件
+  - PROCESS-NAME,com.chinamobile.mcloud,🐓 中国网络自动直连节点分组                            # 中国移动云盘进程
+  - PROCESS-NAME,com.vkontakte.android,🐓 中国网络自动直连节点分组                             # VK社交软件进程
+  - PROCESS-NAME,com.liteapks.androidapps,🐓 中国网络自动直连节点分组                           # 破解商店进程
+  - PROCESS-NAME,com.azure.authenticator,🐓 中国网络自动直连节点分组                           # 二次验证进程
+# 4. 电脑端 - vivo/iQOO通用进程
+  - PROCESS-NAME,vivoCloud.exe,🐓 中国网络自动直连节点分组                                    # vivo云服务PC客户端主进程
+  - PROCESS-NAME,vivoCloudService.exe,🐓 中国网络自动直连节点分组                             # vivo云服务PC后台同步进程
+  - PROCESS-NAME,iQOOCloud.exe,🐓 中国网络自动直连节点分组                                    # iQOO云服务PC客户端主进程
+  - PROCESS-NAME,vivoSuite.exe,🐓 中国网络自动直连节点分组                                    # vivo手机助手PC端进程
+  - PROCESS-NAME,iQOOSuite.exe,🐓 中国网络自动直连节点分组                                    # iQOO手机助手PC端进程
+  - PROCESS-NAME,vivoDriverInstaller.exe,🐓 中国网络自动直连节点分组                           # vivo PC端驱动安装进程
+# 三星手机规则
+  - DOMAIN-SUFFIX,galaxy.store,🐓 中国网络自动直连节点分组                                                 # 商店
+  - DOMAIN-SUFFIX,samsung.com,🐓 中国网络自动直连节点分组                                                 # 官网
+
+
+
+ # 华为手机分流规则                         
+  - DOMAIN-SUFFIX,appgallery.huawei.com,🐓 中国网络自动直连节点分组
+  - DOMAIN-SUFFIX,huaweicloud.com,🐓 中国网络自动直连节点分组
+  - PROCESS-NAME,cn.cj.pe,🐓 中国网络自动直连节点分组 # 139邮箱
+  - PROCESS-NAME,com.baidu.BaiduMap,🐓 中国网络自动直连节点分组 # 百度
+  - PROCESS-NAME,com.huawei.hiskytone,🐓 中国网络自动直连节点分组 # 天际通
+  - PROCESS-NAME,com.mt.mtxx.mtxx,🐓 中国网络自动直连节点分组 # 美图秀秀
+  - PROCESS-NAME,com.sohu.inputmethod.sogou,🐓 中国网络自动直连节点分组 # 搜狗输入法
+  - PROCESS-NAME,com.smile.gifmaker,🐓 中国网络自动直连节点分组 # 快手
+  - PROCESS-NAME,cn.android.sia.exitentrypermit,🐓 中国网络自动直连节点分组 # 移民局app
+  - PROCESS-NAME,cn.cyberIdentity.certification,🐓 中国网络自动直连节点分组 # 国家网络身份认证
+  - PROCESS-NAME,cn.wps.moffice_eng,🐓 中国网络自动直连节点分组 # wps办公
+  - PROCESS-NAME,com.MobileTicket,🐓 中国网络自动直连节点分组 # 铁路12306
+  - PROCESS-NAME,com.cmcc.cmvideo,🐓 中国网络自动直连节点分组 # 咪咕视频
+  - PROCESS-NAME,com.dlmetro.app,🐓 中国网络自动直连节点分组 # 公交卡
+  - PROCESS-NAME,com.cmcc.hebao,🐓 中国网络自动直连节点分组 # 移动和包
+  - PROCESS-NAME,com.greenpoint.android.mc10086.activity,🐓 中国网络自动直连节点分组 # 中国移动app
+  - PROCESS-NAME,com.haier.uhome.uplus,🐓 中国网络自动直连节点分组 # 海尔智家
+  - PROCESS-NAME,com.jingdong.app.mall,🐓 中国网络自动直连节点分组 # 京东
+  - PROCESS-NAME,com.mzk.android,🐓 中国网络自动直连节点分组 # 公交通行
+  - PROCESS-NAME,com.ss.android.ugc.aweme,🐓 中国网络自动直连节点分组 # 抖音
+  - PROCESS-NAME,com.sdu.didi.psnger,🐓 中国网络自动直连节点分组 # 滴滴出行
+  - PROCESS-NAME,com.tmri.app.main,🐓 中国网络自动直连节点分组 # 交管12123
+  - PROCESS-NAME,com.umetrip.android.msky.app,🐓 中国网络自动直连节点分组 # 航旅纵横
+  - PROCESS-NAME,com.ygkj.chelaile.standard,🐓 中国网络自动直连节点分组 # 车来了
+  - PROCESS-NAME,com.android.browser,🐓 中国网络自动直连节点分组 # 华浏览器
+  - PROCESS-NAME,com.android.calendar,🐓 中国网络自动直连节点分组 # 华日历
+  - PROCESS-NAME,com.android.contacts,🐓 中国网络自动直连节点分组 # 华联系人
+  - PROCESS-NAME,com.android.contacts,🐓 中国网络自动直连节点分组 # 华电话
+  - PROCESS-NAME,com.android.deskclock,🐓 中国网络自动直连节点分组 # 华时钟
+  - PROCESS-NAME,com.android.gallery3d,🐓 中国网络自动直连节点分组 # 华图库
+  - PROCESS-NAME,com.android.mediacenter,🐓 中国网络自动直连节点分组 # 华音乐
+  - PROCESS-NAME,com.android.mms,🐓 中国网络自动直连节点分组 # 华信息
+  - PROCESS-NAME,com.android.settings,🐓 中国网络自动直连节点分组 # 华设置
+  - PROCESS-NAME,com.android.soundrecorder,🐓 中国网络自动直连节点分组 # 华录音
+  - PROCESS-NAME,com.android.stk,🐓 中国网络自动直连节点分组 # 华sim卡应用
+  - PROCESS-NAME,com.example.android.notepad,🐓 中国网络自动直连节点分组 # 华备忘录
+  - PROCESS-NAME,com.huawei.android.findmyphone,🐓 中国网络自动直连节点分组 # 华查找设备
+  - PROCESS-NAME,com.huawei.camera,🐓 中国网络自动直连节点分组 # 华相机
+  - PROCESS-NAME,com.huawei.hidisk,🐓 中国网络自动直连节点分组 # 华文件管理
+  - PROCESS-NAME,com.huawei.himovie,🐓 中国网络自动直连节点分组 # 华视频
+  - PROCESS-NAME,com.huawei.vassistant,🐓 中国网络自动直连节点分组 # 华智慧语音
+  - PROCESS-NAME,com.huawei.android.hwouc,🐓 中国网络自动直连节点分组 # 华软件更新
+  - PROCESS-NAME,com.huawei.android.thememanager,🐓 中国网络自动直连节点分组 # 主题
+  - PROCESS-NAME,com.huawei.android.totemweather,🐓 中国网络自动直连节点分组 # 华天气
+  - PROCESS-NAME,com.huawei.appmarket,🐓 中国网络自动直连节点分组 # 华应用商店
+  - PROCESS-NAME,com.huawei.gameassistant,🐓 中国网络自动直连节点分组 # 华应用助手
+  - PROCESS-NAME,com.huawei.health,🐓 中国网络自动直连节点分组 # 华为健康
+  - PROCESS-NAME,com.huawei.hicloud,🐓 中国网络自动直连节点分组 # 华为云空间
+  - PROCESS-NAME,com.huawei.meetime,🐓 中国网络自动直连节点分组 # 华为畅联
+  - PROCESS-NAME,com.huawei.phoneservice,🐓 中国网络自动直连节点分组 # 我的华为
+  - PROCESS-NAME,com.huawei.systemmanager,🐓 中国网络自动直连节点分组 # 华手机管家
+  - PROCESS-NAME,com.huawei.wallet,🐓 中国网络自动直连节点分组 # 华钱包
+  - PROCESS-NAME,com.vmall.client,🐓 中国网络自动直连节点分组 # 华商城
+  - PROCESS-NAME,com.dangbei.ai,🐓 中国网络自动直连节点分组                                            # 当贝ai
+  - PROCESS-NAME,com.baidu.duer.superapp,🐓 中国网络自动直连节点分组                                             # 小度
+  - PROCESS-NAME,cmccwm.mobilemusic,🐓 中国网络自动直连节点分组                                             # 咪咕音乐
+  - PROCESS-NAME,com.baidu.searchbox,🐓 中国网络自动直连节点分组                                            # 百度
+  - PROCESS-NAME,com.baidu.wenku,🐓 中国网络自动直连节点分组                                              # 百度文库
+  - PROCESS-NAME,com.dangbei.ai,🐓 中国网络自动直连节点分组                                             # 当贝ai
+  - PROCESS-NAME,com.dangbei.remotecontroller,🐓 中国网络自动直连节点分组                                             # 当贝家
+  - PROCESS-NAME,com.cmic.heduohao,🐓 中国网络自动直连节点分组                                              # 和多号
+  - PROCESS-NAME,com.huawei.android.pushagent,🐓 中国网络自动直连节点分组                                             # 华为手机的系统推送服务进程
+  - PROCESS-NAME,data.hicloud.com,🐓 中国网络自动直连节点分组                                              # 华为云服务的核心数据域名
+  - PROCESS-NAME,com.huawei.rcsserviceapplication,🐓 中国网络自动直连节点分组                                            # 华为手机通讯服务
+  - PROCESS-NAME,com.huawei.hiaction.share_user,🐓 中国网络自动直连节点分组                                              # 华为设备间快捷分享功能的核心组件
+  - PROCESS-NAME,channel.hitouch.hicloud.com,🐓 中国网络自动直连节点分组                                             # 华为手机一碰传互传互联云端支持
+  - PROCESS-NAME,com.huawei.hwid,🐓 中国网络自动直连节点分组                                            # 华为账号（Huawei ID）的核心服务组件
+  - PROCESS-NAME,grs.dbankcloud.eu,🐓 中国网络自动直连节点分组                                              # 华为面向欧洲地区的全球资源调度（GRS）域名
+
+
+# deepseek 规则
+  - DOMAIN-SUFFIX,deepseek.com,🐓 中国网络自动直连节点分组
+  - DOMAIN-SUFFIX,deepseek.ai,🐓 中国网络自动直连节点分组
+  - DOMAIN-KEYWORD,deepseek,🐓 中国网络自动直连节点分组
+  - DOMAIN-KEYWORD,deepseek.chat,🐓 中国网络自动直连节点分组
+  - PROCESS-NAME,com.deepseek.chat,🐓 中国网络自动直连节点分组                        
+# 豆包核心业务域名（全量覆盖，含主站、API、资源）
+  - DOMAIN-SUFFIX,doubao.com,🐓 中国网络自动直连节点分组                                  # 豆包主域名（如web端、官网）
+  - DOMAIN-SUFFIX,doubaoapis.com,🐓 中国网络自动直连节点分组                              # 豆包核心API接口域名（对话、功能调用）
+  - DOMAIN-SUFFIX,doubaoimg.com,🐓 中国网络自动直连节点分组                                # 豆包资源域名（图片、表情、附件）
+  - DOMAIN-SUFFIX,doubaocdn.com,🐓 中国网络自动直连节点分组                               # 豆包CDN加速域名（静态资源加载）
+# 豆包CDN及资源域名 豆包依赖的第三方资源域名（避免代理拦截静态资源）
+  - DOMAIN-SUFFIX,bdimg.com,🐓 中国网络自动直连节点分组                                 # 百度系CDN（豆包部分图片/图标依赖）
+  - DOMAIN-SUFFIX,bdstatic.com,🐓 中国网络自动直连节点分组                                # 百度系静态资源（豆包样式/脚本依赖）
+  - DOMAIN-SUFFIX,qianfanapi.com,🐓 中国网络自动直连节点分组                              # 百度千帆API（豆包部分AI能力依赖）
+  - DOMAIN-SUFFIX,qianfancdn.com,🐓 中国网络自动直连节点分组                               # 百度千帆CDN（AI能力相关资源）
+  - DOMAIN-SUFFIX,bytedance.com,🐓 中国网络自动直连节点分组
+  - PROCESS-NAME,com.larus.nova,🐓 中国网络自动直连节点分组                                                # 豆包
+  - PROCESS-NAME,com.bytedance.doubao,🐓 中国网络自动直连节点分组                                  # 豆包APP进程（精准匹配手机端APP，优先于其他规则）
+  - DOMAIN-KEYWORD,Doubao,🐓 中国网络自动直连节点分组                                # 豆包专属UA标识（覆盖网页端、小程序端请求）
+# 腾讯元宝
+  - PROCESS-NAME,com.tencent.hunyuan.app.chat,🐓 中国网络自动直连节点分组
+# 腾讯规则微信QQ
+  - DOMAIN-SUFFIX,qq.com,🐓 中国网络自动直连节点分组
+  - DOMAIN-SUFFIX,wx.qq.com,🐓 中国网络自动直连节点分组                                               # 微信相关域名
+  - DOMAIN-SUFFIX,im.qq.com,🐓 中国网络自动直连节点分组                                                # QQ即时通讯相关域名
+  - PROCESS-NAME,com.tencent.mm,🐓 中国网络自动直连节点分组                                 # 微信进程
+  - PROCESS-NAME,com.tencent.mobileqq,🐓 中国网络自动直连节点分组                             # QQ进程
+  - PROCESS-NAME,WeChat.exe,🐓 中国网络自动直连节点分组
+  - PROCESS-NAME,QQ.exe,🐓 中国网络自动直连节点分组
+  - PROCESS-NAME,com.tencent.androidqqmailr,🐓 中国网络自动直连节点分组                                                # 手机qq邮箱
+  - DOMAIN-KEYWORD,qq,🐓 中国网络自动直连节点分组                                                    # 关键词qq直播
+  - DOMAIN-KEYWORD,weixin,🐓 中国网络自动直连节点分组
+ # 百度网盘
+  - PROCESS-NAME,BaiduNetdisk.exe,🐓 中国网络自动直连节点分组
+  - DOMAIN-SUFFIX,pan.baidu.com,🐓 中国网络自动直连节点分组                                    # 百度网盘主域名
+  - DOMAIN-SUFFIX,baidupcs.com,🐓 中国网络自动直连节点分组                             # 百度网盘相关存储域名
+# 腾讯视频TV版（极光TV）
+  - PROCESS-NAME,com.tencent.tv,🐓 中国网络自动直连节点分组                                          # 安卓端包名，PC端若有客户端可类似查找进程名
+  - DOMAIN-SUFFIX,qq.com,🐓 中国网络自动直连节点分组                                                    # 腾讯相关服务
+  - DOMAIN-SUFFIX,v.qq.com,🐓 中国网络自动直连节点分组                                              # 腾讯视频域名
+ # 爱奇艺TV版（银河奇异果）
+  - PROCESS-NAME,com.qiyi.video.tv,🐓 中国网络自动直连节点分组                                      # 安卓端包名
+  - DOMAIN-SUFFIX,qiyi.com,🐓 中国网络自动直连节点分组                                             # 爱奇艺基础服务域名
+  - DOMAIN-SUFFIX,tv.qiyi.com,🐓 中国网络自动直连节点分组                                           # 爱奇艺TV版相关域名
+# 优酷TV版（CIBN酷喵影视）
+  - PROCESS-NAME,com.youku.tv,🐓 中国网络自动直连节点分组                                      # 安卓端包名
+  - DOMAIN-SUFFIX,youku.com,🐓 中国网络自动直连节点分组                                         # 优酷基础服务域名
+  - DOMAIN-SUFFIX,tv.youku.com,🐓 中国网络自动直连节点分组                                        # 优酷TV版相关域名
+# 咪咕规则
+  - DOMAIN-SUFFIX,migu.cn,🐓 中国网络自动直连节点分组
+  - DOMAIN-SUFFIX,miguvideo.com,🐓 中国网络自动直连节点分组
+  - DOMAIN-SUFFIX,cmvideo.com,🐓 中国网络自动直连节点分组
+  - DOMAIN-KEYWORD,migu,🐓 中国网络自动直连节点分组
+  - DOMAIN-KEYWORD,cmvideo,🐓 中国网络自动直连节点分组
+  - DOMAIN-KEYWORD,miguvideo,🐓 中国网络自动直连节点分组
+# PayPal 规则
+  - DOMAIN-KEYWORD,paypal,🐓 中国网络自动直连节点分组
+  - DOMAIN-SUFFIX,paypal.com,🐓 中国网络自动直连节点分组
+  - PROCESS-NAME,com.paypal.android.p2pmobile,🐓 中国网络自动直连节点分组
+# 币安
+  - PROCESS-NAME,com.binance.dev,🐓 中国网络自动直连节点分组                                  # 币安
+# 欧易
+  - PROCESS-NAME,com.okinc.okex.gp,🐓 中国网络自动直连节点分组                                # 欧易
+#惠普
+  - DOMAIN-SUFFIX,arubanetworks.com,🐓 中国网络自动直连节点分组                                    # Aruba Networks（属于惠普公司）提供的网络设备和解决方案域名，用于管理企业无线网络和交换机系统
+ #华硕
+  - DOMAIN-SUFFIX,asus.com,🐓 中国网络自动直连节点分组                                                      # 华硕公司的官方网站，用于销售和支持其电子产品，包括主板、笔记本、路由器等。
+  - DOMAIN-SUFFIX,asusrouter.com,🐓 中国网络自动直连节点分组                                            # 与华硕路由器相关的域名，用于路由器设备的管理和支持
+
+# 出境易 分流规则
+  - DOMAIN-SUFFIX,chujingyi.com,🐓 中国网络自动直连节点分组                             # 出境易主域名（境内功能入口，如APP首页、用户中心）
+  - DOMAIN-SUFFIX,chujingyi.cn,🐓 中国网络自动直连节点分组                             # 出境易境内备用域名（主域名解析异常时兜底）
+  - DOMAIN-SUFFIX,chujingyi.net,🐓 中国网络自动直连节点分组                            # 出境易数据同步域名（本地行程云备份、配置同步）
+  - DOMAIN-SUFFIX,chujingyi.com,🐓 中国网络自动直连节点分组                          # 置顶主域名规则，防止被其他通用域名规则拦截
+  - DOMAIN-KEYWORD,chujingyi-api,🐓 中国网络自动直连节点分组                         # 出境易境内API接口（如验证码发送、登录验证请求）
+  - DOMAIN-KEYWORD,chujingyi,🐓 中国网络自动直连节点分组                               # 置顶关键词规则，所有含“chujingyi”的请求优先匹配专属规则
+
+# 关联第三方服务，对接境内外支付、运营商等第三方，按属性匹配路由
+  - DOMAIN-SUFFIX,chujingyi-alipay.com,🐓 中国网络自动直连节点分组                          # 境内支付宝支付对接（境内支付通道，直连更稳定）
+  - DOMAIN-SUFFIX,chujingyi-wechatpay.com,🐓 中国网络自动直连节点分组                         # 境内微信支付对接（境内支付通道，避免代理延迟）
+  - DOMAIN-SUFFIX,chujingyi-10086.com,🐓 中国网络自动直连节点分组                       # 境内中国移动漫游对接（境内运营商服务，直连保畅通）
+  - DOMAIN-SUFFIX,chujingyi-paypal.com,🐓 中国网络自动直连节点分组                        # 境外PayPal支付对接（境外支付通道，需代理访问）
+
+# open ai 和ChatGPT  相互的，监控 / 时间 / 常用第三方直连（避免走代理影响延迟/计费）
+  - DOMAIN-SUFFIX,datadoghq.com,🐓 中国网络自动直连节点分组
+  - DOMAIN-SUFFIX,datadog.com,🐓 中国网络自动直连节点分组
+  - DOMAIN-SUFFIX,pool.ntp.org,🐓 中国网络自动直连节点分组
+  - DOMAIN-SUFFIX,ntp.org,🐓 中国网络自动直连节点分组
+
+   
+  - GEOIP,LAN,DIRECT,no-resolve             # 悠哉规则类型：GEOIP（基于IP归属地匹配）；值：LAN（内网IP归属地）；参数：no-resolve；目标分组：DIRECT
+  - GEOIP,CN,DIRECT,no-resolve                # 悠哉规则类型：GEOIP；值：CN（中国IP归属地）；参数：no-resolve；目标分组：DIRECT
+  - GEOSITE,cn,DIRECT                                # 悠哉规则类型：GEOSITE（基于域名归属地分类匹配）；值：cn（中国大陆域名分类）；目标分组：DIRECT
+  - GEOSITE,CN,DIRECT
+  - GEOSITE,private,DIRECT                           # 规则作用：匹配GEOSITE的private分类（非公共互联网域名），避免代理导致内网访问失败  1. 家庭/企业内网域名（如 server.local、printer.lan）2. 设备本地管理地址（如路由器 router.asus.com、NAS synology.local）3. 内部服务域名（如公司OA、数据库管理域名）
+
+
+
+
+# 手机系统分流规则
+  - DOMAIN,android.uid.system,DIRECT    #安卓手机系统级用户标识，系统核心进程
+
+
+# 广告试点工程
+
+  - DOMAIN-SUFFIX,doubleclick.net,🈲 广告自动拦截⛔⛔⛔0                   # 谷歌广告投放域名，视频前贴片广告常通过该域名加载广告相关 是谷歌旗下的广告服务域名，许多广告投放会依赖该域名或其相关子域名，通过此设置可阻止与之相关的广告请求，能提升网络浏览体验，加快网页加载速度，减少带宽占用，还可在一定程度上增强隐私保护。
+  - DOMAIN-SUFFIX,googleadservices.com,🈲 广告自动拦截⛔⛔⛔0     # YouTube广告核心服务域名，多数开头广告请求依赖此后缀
+  - DOMAIN,googleads.g.doubleclick.net,🈲 广告自动拦截⛔⛔⛔0       # 定向拦截YouTube广告相关的点击与数据统计域名
+  - DOMAIN,pubads.g.doubleclick.net,🈲 广告自动拦截⛔⛔⛔0           # 拦截YouTube视频广告的投放脚本加载域名
+  - DOMAIN-KEYWORD,googleads,🈲 广告自动拦截⛔⛔⛔0              # 谷歌广告核心域名
+  - DOMAIN-KEYWORD,doubleclick,🈲 广告自动拦截⛔⛔⛔0               # 谷歌双击广告
+
+
+
+
+  - DOMAIN,youtubei.googleapis.com,⚖️ 香港自动负载均衡轮询节点分组      # YouTube 核心接口域名  
+  - DOMAIN-SUFFIX,googlevideo.com,⚖️ 香港自动负载均衡轮询节点分组     # YouTube 视频资源域名后缀
+  - DOMAIN-SUFFIX,ytimg.com,⚖️ 香港自动负载均衡轮询节点分组                    # YouTube 图片资源域名后缀
+  - DOMAIN-SUFFIX,youtube.com,⚖️ 香港自动负载均衡轮询节点分组                 # YouTube 主域名后缀
+  - DOMAIN-SUFFIX,ggpht.com,⚖️ 香港自动负载均衡轮询节点分组                 # 获取视频播放所需的资源、视频封面图等  
+  - PROCESS-NAME,com.google.android.youtube,⚖️ 香港自动负载均衡轮询节点分组                         # YouTube 安卓端进程名
+  - PROCESS-NAME,com.google.android.apps.youtube.music,⚖️ 香港自动负载均衡轮询节点分组     # 谷歌音乐安卓端进程名
+  - PROCESS-NAME,app.revanced.android.apps.youtube.music,⚖️ 香港自动负载均衡轮询节点分组 # 谷歌音乐修改进程名  
+  - DOMAIN-KEYWORD,youtube,⚖️ 香港自动负载均衡轮询节点分组            # 域名含youtube关键字
+  - DOMAIN-KEYWORD,googlevideo,⚖️ 香港自动负载均衡轮询节点分组         # YouTube 视频资源域名关键字
+  - DOMAIN-KEYWORD,youtubei,⚖️ 香港自动负载均衡轮询节点分组               # YouTube 接口域名关键字
+
+
+
+
+# 谷歌服务规则（悠哉定义：按服务敏感度分级，低敏感服务走香港节点（低延迟），高敏感服务走美国节点（适配性））
+# 谷歌低敏感服务（悠哉用途：日常工具类服务，对节点地域无强要求，优先低延迟）
+  - PROCESS-NAME,com.google.android.apps.authenticator2,⚠️ 谷歌GV专用节点分组          # 谷歌身份验证器进程名
+  - PROCESS-NAME,com.google.android.apps.maps,⚠️ 谷歌GV专用节点分组                         # 谷歌地图进程名
+  - PROCESS-NAME,com.google.ar.lens,⚠️ 谷歌GV专用节点分组                                              # 谷歌智能镜头进程名
+  - PROCESS-NAME,com.google.android.apps.translate,⚠️ 谷歌GV专用节点分组                    # 谷歌翻译进程名
+  - PROCESS-NAME,com.google.android.apps.docs,⚠️ 谷歌GV专用节点分组                          # 谷歌云端硬盘进程名
+  - PROCESS-NAME,com.google.android.gm,⚠️ 谷歌GV专用节点分组                                      # 谷歌邮箱进程名
+  - PROCESS-NAME,com.google.android.inputmethod.latin,⚠️ 谷歌GV专用节点分组               # 谷歌输入法进程名
+  - PROCESS-NAME,com.google.android.syncadapters.contacts,⚠️ 谷歌GV专用节点分组       # 谷歌通讯录同步进程名
+  - PROCESS-NAME,com.google.android.syncadapters.calendar,⚠️ 谷歌GV专用节点分组       # 谷歌日历同步进程名
+
+# 谷歌中敏感服务（悠哉用途：合作伙伴服务/通信服务，需稳定节点 ）
+  - PROCESS-NAME,com.google.android.contactkeys,⚠️ 谷歌GV专用节点分组                         # 谷歌联系人密钥进程名
+  - PROCESS-NAME,com.google.android.ims,⚠️ 谷歌GV专用节点分组                                        # 谷歌运营商通信服务进程名
+  - PROCESS-NAME,com.google.android.partnersetup,⚠️ 谷歌GV专用节点分组           # 谷歌合作伙伴设置进程名
+
+# 谷歌 高风险验证 规则，例如google voice gv规则等,逐步完善中.谷歌高敏感服务（悠哉用途：账号验证、GV 等服务，对节点地域有强要求，需美国节点）
+  - DOMAIN,voice.googleapis.com,⚠️ 谷歌GV专用节点分组
+  - DOMAIN,voice.google.com,⚠️ 谷歌GV专用节点分组
+  - DOMAIN,peoplestack-pa.googleapis.com,⚠️ 谷歌GV专用节点分组  
+  - DOMAIN,www.google-analytics.com,⚠️ 谷歌GV专用节点分组
+  - DOMAIN,ogads-pa.clients6.google.com,⚠️ 谷歌GV专用节点分组
+  - DOMAIN-SUFFIX,gvt1.com,⚠️ 谷歌GV专用节点分组                         # 属于Google用于各种服务的检测和数据收集
+  - DOMAIN-SUFFIX,gvt2.com,⚠️ 谷歌GV专用节点分组                        # 谷歌CDN域视频音频内容分发大或大规模分发内容通过这个来加速
+  - DOMAIN-SUFFIX,gstatic.com,⚠️ 谷歌GV专用节点分组
+  - DOMAIN-SUFFIX,googleapis.com,⚠️ 谷歌GV专用节点分组
+  - DOMAIN-SUFFIX,withgoogle.com,⚠️ 谷歌GV专用节点分组
+  - DOMAIN-SUFFIX,googleusercontent.com,⚠️ 谷歌GV专用节点分组          # 涉及Google应用的内容和功能服务。
+  - DOMAIN-SUFFIX,doubleclick.net,⚠️ 谷歌GV专用节点分组
+
+# 谷歌高风险进程
+  - PROCESS-NAME,com.google.android.gms,⚠️ 谷歌GV专用节点分组            # GooglePlay服务
+  - PROCESS-NAME,com.google.android.gsf,⚠️ 谷歌GV专用节点分组              # Google服务框架
+  - PROCESS-NAME,com.android.vending,⚠️ 谷歌GV专用节点分组                  # 谷歌商店
+  - PROCESS-NAME,com.android.chrome,⚠️ 谷歌GV专用节点分组                  # 谷歌浏览器  
+  - PROCESS-NAME,com.google.android.apps.googlevoice,⚠️ 谷歌GV专用节点分组        # GV  voice
+  - PROCESS-NAME,com.google.uid.shared,⚠️ 谷歌GV专用节点分组     # 是谷歌相关的共享用户ID服务，通常与谷歌账号验证、应用授权等功能有关。该连接指向 Google Play 商店的安全端口，可能是用于验证、下载应用或同步数据
+  - PROCESS-NAME,com.google.android.googlequicksearchbox,⚠️ 谷歌GV专用节点分组           # Google 搜索应用的核心进程，主要负责提供快速搜索、语音识别和搜索建议等功能。通常由 Google LLC 维护，是 Android 系统中重要的预装应用之一。
+
+# 谷歌高风险关键词兜底
+  - DOMAIN-KEYWORD,voice,⚠️ 谷歌GV专用节点分组
+  - DOMAIN-KEYWORD,googleapis,⚠️ 谷歌GV专用节点分组                       # 通常用于谷歌提供的API服务
+  - DOMAIN-KEYWORD,peoplestack,⚠️ 谷歌GV专用节点分组
+  - DOMAIN-KEYWORD,accounts.google,⚠️ 谷歌GV专用节点分组
+  - DOMAIN-KEYWORD,googleusercontent,⚠️ 谷歌GV专用节点分组
+
+# 谷歌google.com域名后缀兜底 太广泛
+  - DOMAIN-SUFFIX,google.com,⚠️ 谷歌GV专用节点分组
+
+# google 关键词，太广泛需要垫底，与出境易中的谷歌内容呼应，出境易进程垫底兜底。
+  - DOMAIN-KEYWORD,google,⚠️ 谷歌GV专用节点分组
+
+# 谷歌兜底结束。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。
+
+# open ai 规则  ChatGPT
+  - PROCESS-NAME,com.openai.chatgpt,⚠️ 谷歌GV专用节点分组
+  - DOMAIN-KEYWORD,openai.chatgpt,⚠️ 谷歌GV专用节点分组
+  - DOMAIN-KEYWORD,openai,⚠️ 谷歌GV专用节点分组
+  - DOMAIN-SUFFIX,openai.com,⚠️ 谷歌GV专用节点分组 
+  - DOMAIN,android.chat.openai.com,⚠️ 谷歌GV专用节点分组
+  - DOMAIN-SUFFIX,openaiapis.com,⚠️ 谷歌GV专用节点分组
+  - DOMAIN-SUFFIX,api.openai.com,⚠️ 谷歌GV专用节点分组
+  - DOMAIN-SUFFIX,platform.openai.com,⚠️ 谷歌GV专用节点分组
+  - DOMAIN-SUFFIX,cdn.openai.com,⚠️ 谷歌GV专用节点分组
+  - DOMAIN-SUFFIX,relay.openai.com,⚠️ 谷歌GV专用节点分组
+
+
+
+# gps 虚拟定位规则
+  - PROCESS-NAME,com.rosteam.gpsemulator,🇭🇰 香港分流自动节点分组
+  # 电视商店和桌面
+  - PROCESS-NAME,com.oversea.aslauncher,🇭🇰 香港分流自动节点分组
+  - PROCESS-NAME,com.overseas.store.appstore,🇭🇰 香港分流自动节点分组
+  # instagram
+  - DOMAIN-SUFFIX,instagram.com,🇭🇰 香港分流自动节点分组 
+  - DOMAIN-KEYWORD,instagram,🇭🇰 香港分流自动节点分组
+  - PROCESS-NAME,com.instagram.android,🇭🇰 香港分流自动节点分组                      # ig视频
+  - PROCESS-NAME,com.instagram.barcelona,🇭🇰 香港分流自动节点分组             # Instagram推出的Threads应用
+  # discord  聊天室规则
+  - PROCESS-NAME,com.discord,🇭🇰 香港分流自动节点分组                        # Discord
+  # whatsapp 规则
+  - DOMAIN-SUFFIX,whatsapp.com,🇭🇰 香港分流自动节点分组
+  - DOMAIN-SUFFIX,whatsapp.net,🇭🇰 香港分流自动节点分组
+  - DOMAIN-KEYWORD,whatsapp,🇭🇰 香港分流自动节点分组
+  - PROCESS-NAME,com.whatsapp,🇭🇰 香港分流自动节点分组
+  # twitch 规则
+  - DOMAIN-SUFFIX,twitch.com,🇭🇰 香港分流自动节点分组
+  - DOMAIN-KEYWORD,twitch,🇭🇰 香港分流自动节点分组
+  - PROCESS-NAME,tv.twitch.android.app,🇭🇰 香港分流自动节点分组
+  # Facebook 规则
+  - DOMAIN-SUFFIX,facebook.com,🇭🇰 香港分流自动节点分组
+  - DOMAIN-KEYWORD,facebook,🇭🇰 香港分流自动节点分组
+  - PROCESS-NAME,com.facebook.orca,🇭🇰 香港分流自动节点分组             # 脸书短信
+  - PROCESS-NAME,com.facebook.katana,🇭🇰 香港分流自动节点分组
+
+
+
+# tiktok和.lite极速版 规则
+  - DOMAIN-SUFFIX,tiktok.com,🇹🇼 台湾自动节点分组
+  - DOMAIN-SUFFIX,tiktokcdn.com,🇹🇼 台湾自动节点分组
+  - DOMAIN-SUFFIX,tiktokv.com,🇹🇼 台湾自动节点分组              # 视频流与资源加载核心域名
+  - DOMAIN-SUFFIX,muscdn.com,🇹🇼 台湾自动节点分组
+  - DOMAIN-SUFFIX,akamaized.net,🇹🇼 台湾自动节点分组      # CDN 子域名
+  - DOMAIN-SUFFIX,musicaly.ly,🇹🇼 台湾自动节点分组             # 历史遗留的相关域名
+  - DOMAIN-SUFFIX,byteoversea.com,🇹🇼 台湾自动节点分组
+  - DOMAIN-SUFFIX,tiktokcdn-us.com,🇹🇼 台湾自动节点分组       # 海外CDN节点（美洲区域）
+  - DOMAIN-SUFFIX,tiktokcdn-eu.com,🇹🇼 台湾自动节点分组        # 海外CDN节点（欧洲区域）
+  - DOMAIN-SUFFIX,tiktokshop.com,🇹🇼 台湾自动节点分组
+  - DOMAIN-SUFFIX,seller.us.tiktokshopglobalselling.com,🇹🇼 台湾自动节点分组
+  - DOMAIN-SUFFIX,seller.uk.tiktokshopglobalselling.com,🇹🇼 台湾自动节点分组
+  - DOMAIN-SUFFIX,tiktok-shops.com,🇹🇼 台湾自动节点分组
+  - DOMAIN-SUFFIX,tiktokads.com,🇹🇼 台湾自动节点分组 
+  - DOMAIN-SUFFIX,live-tiktok.com,🇹🇼 台湾自动节点分组 
+  - DOMAIN-SUFFIX,larksuite.com,🇹🇼 台湾自动节点分组        # Lark
+  - DOMAIN-KEYWORD,tiktok,🇹🇼 台湾自动节点分组
+  - DOMAIN-KEYWORD,zhiliaoapp,🇹🇼 台湾自动节点分组
+  - DOMAIN-KEYWORD,zhiliaoapp.musically,🇹🇼 台湾自动节点分组  
+  - PROCESS-NAME,com.tiktok.lite.go,🇹🇼 台湾自动节点分组                 # tiktok极速版
+  - PROCESS-NAME,com.zhiliaoapp.musically,🇹🇼 台湾自动节点分组      # 全球版本和非洲版本
+  - PROCESS-NAME,com.ss.android.ugc.trill,🇹🇼 台湾自动节点分组       # 亚洲和东南亚版本
+  - PROCESS-NAME,com.tiktokshop.serller,🇹🇼 台湾自动节点分组         # 商店
+
+  - PROCESS-NAME,sg.bigo.live,⚖️ 香港自动负载均衡散列节点分组
+  - DOMAIN-SUFFIX,twitter.com,🕹️ 手动选择节点分组
+  - DOMAIN-KEYWORD,twitter,🕹️ 手动选择节点分组
+  - PROCESS-NAME,com.twitter.android,🕹️ 手动选择节点分组
+  - PROCESS-NAME,com.microsoft.emmx,🕹️ 手动选择节点分组
+  - GEOIP,HK,🇭🇰 香港分流自动节点分组
+  - GEOIP,TW,🇹🇼 台湾自动节点分组
+  - GEOIP,SG,🇸🇬 新加坡自动节点分组
+  - GEOIP,JP,🇯🇵 日本自动节点分组
+  - GEOIP,KR,🇰🇷 韩国自动节点分组
+  - GEOIP,US,🇺🇸 美国分流自动节点分组
+  - PROCESS-NAME,org.telegram.messenger.web,🕹️ 手动选择节点分组
+  - PROCESS-NAME,com.microsoft.office.outlook,🕹️ 手动选择节点分组
+  - DOMAIN,fuchenyouzai.dpdns.org,⚖️ 香港自动负载均衡散列节点分组
+  - PROCESS-NAME,com.easy.abroad,🇭🇰 香港自动节点分组
+  - PROCESS-NAME,com.fongmi.android.tv,🐓 中国网络自动直连节点分组
+  - GEOSITE,geolocation-!cn,🇭🇰 香港自动节点分组
+  - MATCH,🐟 漏网之鱼
+
+
+
+
+
+
+
