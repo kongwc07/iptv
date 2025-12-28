@@ -54,7 +54,7 @@ http://mytv.cdn.loc.cc/o12.php?id=fct
 #EXTINF:-1 tvg-id="明珠台字幕" tvg-name="明珠台字幕" group-title="其他频道",明珠台字幕
 http://mytv.cdn.loc.cc/o12.php?id=mzt
 #EXTINF:-1 tvg-id="翡翠台4K" tvg-name="翡翠台4K" group-title="其他频道",翡翠台4K
-ttps://o11.163189.xyz/stream/tvb/fct4k/
+https://o11.163189.xyz/stream/tvb/fct4k/
 #EXTINF:-1 tvg-id="TVB PLUS" tvg-name="TVB PLUS" group-title="其他频道",TVB PLUS
 https://o11.163189.xyz/stream/tvb/tvbp/
 #EXTINF:-1 tvg-id="明珠台(多音轨字幕)" tvg-name="明珠台" group-title="其他频道",明珠台
