@@ -75,3 +75,5 @@ https://o11.163189.xyz/stream/live/tvbxh/
 https://o11.163189.xyz/stream/live/iqiyi/
 #EXTINF:-1 tvg-id="千禧经典台" tvg-name="千禧经典台" group-title="其他频道",千禧经典台
 https://o11.163189.xyz/stream/live/tvbc/
+#EXTINF:-1 tvg-id="千禧经典台" tvg-name="世界杯台" group-title="其他频道",世界杯
+http://82.156.243.185:33389/fwc.m3u
